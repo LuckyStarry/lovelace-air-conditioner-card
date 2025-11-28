@@ -1,6 +1,3 @@
-import { LitElement, html, css } from "lit";
-import { property, state } from "lit/decorators.js";
-
 /**
  * 空调控制卡片
  * 使用方式: type: custom:air-conditioner-card
