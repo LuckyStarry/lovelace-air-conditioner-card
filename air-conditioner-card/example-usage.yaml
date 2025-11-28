@@ -1,0 +1,42 @@
+# 空调自定义卡片使用示例
+
+# 基本用法
+- type: custom:air-conditioner-card
+  entity: climate.master_bedroom_ac
+  name: 主卧空调
+  temp_entity: sensor.master_bedroom_temperature
+  humi_entity: sensor.master_bedroom_humidity
+
+# 完整配置
+- type: custom:air-conditioner-card
+  entity: climate.living_room_ac
+  name: 客厅空调
+  temp_entity: sensor.living_room_temperature
+  humi_entity: sensor.living_room_humidity
+  show_graph: true
+
+# 在网格布局中使用
+- type: grid
+  cards:
+    - type: custom:air-conditioner-card
+      entity: climate.bedroom_ac
+      name: 卧室空调
+      temp_entity: sensor.bedroom_temperature
+      humi_entity: sensor.bedroom_humidity
+      grid_options:
+        columns: 6
+        rows: auto
+    - type: custom:air-conditioner-card
+      entity: climate.study_ac
+      name: 书房空调
+      temp_entity: sensor.study_temperature
+      humi_entity: sensor.study_humidity
+      grid_options:
+        columns: 6
+        rows: auto
+
+# 隐藏图表
+- type: custom:air-conditioner-card
+  entity: climate.kitchen_ac
+  name: 厨房空调
+  show_graph: false

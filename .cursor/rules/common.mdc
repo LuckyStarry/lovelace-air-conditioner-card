@@ -1,0 +1,378 @@
+---
+description: Home Assistant Lovelace 自定义卡片开发规则
+globs:
+  - "**/*.js"
+  - "**/*.md"
+  - "**/*.yaml"
+  - "**/*.json"
+alwaysApply: true
+---
+
+# Home Assistant Lovelace 自定义卡片开发规则
+
+## 项目概述
+
+这是一个 Home Assistant Lovelace 自定义卡片仓库，包含多个可复用的卡片组件，通过 HACS 安装使用。
+
+## 技术栈
+
+- **框架**: Lit Element (Web Components)
+- **平台**: Home Assistant Lovelace
+- **包管理**: HACS (Home Assistant Community Store)
+- **语言**: JavaScript (ES6+)
+- **样式**: CSS (Lit CSS)
+
+## 文件结构规范
+
+每个卡片应该遵循以下结构：
+
+```
+[card-name]/
+├── [card-name].js          # 主卡片文件（必需）
+├── README.md               # 卡片说明文档（必需）
+├── hacs.json               # HACS 配置文件（必需）
+├── CHANGELOG.md           # 更新日志（推荐）
+├── INSTALL.md             # 安装指南（推荐）
+├── DEPENDENCIES.md        # 依赖说明（推荐）
+├── example-usage.yaml     # 使用示例（推荐）
+└── manifest.json          # 清单文件（可选）
+```
+
+## 代码规范
+
+### 1. 卡片类结构
+
+```javascript
+import { LitElement, html, css } from "lit";
+
+class MyCard extends LitElement {
+  static get properties() {
+    return {
+      hass: { type: Object },
+      config: { type: Object },
+    };
+  }
+
+  static getConfigElement() {
+    return null; // 或返回配置编辑器元素
+  }
+
+  static getStubConfig(hass, entities) {
+    // 返回默认配置
+  }
+
+  setConfig(config) {
+    // 验证和设置配置
+  }
+
+  getCardSize() {
+    return 3; // 返回卡片高度（单位：行）
+  }
+
+  render() {
+    // 返回 HTML 模板
+  }
+
+  static get styles() {
+    return css`
+      /* CSS 样式 */
+    `;
+  }
+}
+
+customElements.define("my-card", MyCard);
+```
+
+### 2. 命名规范
+
+- **卡片类名**: PascalCase（如 `AirConditionerCard`）
+- **自定义元素名**: kebab-case（如 `air-conditioner-card`）
+- **文件名**: kebab-case（如 `air-conditioner-card.js`）
+- **目录名**: kebab-case（如 `air-conditioner-card`）
+- **变量/函数**: camelCase（如 `getModeColor`）
+- **常量**: UPPER_SNAKE_CASE（如 `DEFAULT_TEMP`）
+
+### 3. 必需方法
+
+- `setConfig(config)`: 验证并设置配置，必须验证必需参数
+- `getCardSize()`: 返回卡片大小（用于布局计算）
+- `render()`: 返回 Lit HTML 模板
+- `static get styles()`: 返回 Lit CSS 样式
+
+### 4. 配置验证
+
+```javascript
+setConfig(config) {
+  if (!config.entity) {
+    throw new Error("请指定实体 (entity)");
+  }
+  this.config = config;
+}
+```
+
+### 5. 实体访问
+
+```javascript
+// 获取实体状态
+const entity = this.hass.states[this.config.entity];
+
+// 检查实体是否存在
+if (!entity) {
+  return html`<ha-card><div class="error">实体未找到</div></ha-card>`;
+}
+```
+
+### 6. 服务调用
+
+```javascript
+_callService(domain, service, serviceData) {
+  this.hass.callService(domain, service, serviceData);
+}
+
+// 使用示例
+_handleToggle() {
+  this._callService("climate", "toggle", {
+    entity_id: this.config.entity,
+  });
+}
+```
+
+### 7. 样式规范
+
+- 使用 Lit CSS
+- 支持 CSS 变量（用于主题适配）
+- 使用响应式设计
+- 遵循 Material Design 原则
+
+```javascript
+static get styles() {
+  return css`
+    .card {
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--card-background-color, #fff);
+    }
+
+    .button {
+      --mdc-theme-primary: var(--primary-color);
+    }
+  `;
+}
+```
+
+### 8. HTML 模板规范
+
+- 使用 Lit HTML 模板
+- 使用 `ha-card` 作为根容器
+- 使用 Home Assistant 内置组件（`ha-icon`, `ha-switch` 等）
+- 使用 Material Web Components（`mwc-button` 等）
+
+```javascript
+render() {
+  return html`
+    <ha-card>
+      <div class="card-content">
+        <ha-icon icon="mdi:fan"></ha-icon>
+        <div class="title">${this.config.name}</div>
+      </div>
+    </ha-card>
+  `;
+}
+```
+
+## HACS 配置规范
+
+### hacs.json 格式
+
+```json
+{
+  "name": "卡片显示名称",
+  "render_readme": true,
+  "filename": "卡片文件名.js",
+  "domains": ["lovelace"],
+  "homeassistant": "2023.1.0"
+}
+```
+
+### 要求
+
+- `name`: 卡片在 HACS 中显示的名称
+- `filename`: 必须与主卡片文件名一致
+- `homeassistant`: 最低要求的 Home Assistant 版本
+- `render_readme`: 建议设为 `true`，让 HACS 渲染 README
+
+## 文档规范
+
+### README.md 必须包含
+
+1. **功能特性列表**
+2. **安装方法**（HACS 和手动安装）
+3. **使用方法**（基本用法和完整配置）
+4. **配置选项表格**
+5. **依赖项说明**
+6. **故障排除**
+
+### CHANGELOG.md 格式
+
+遵循 [Keep a Changelog](https://keepachangelog.com/) 格式：
+
+```markdown
+## [版本号] - YYYY-MM-DD
+
+### Added
+
+- 新功能
+
+### Changed
+
+- 功能变更
+
+### Fixed
+
+- 问题修复
+```
+
+## 最佳实践
+
+### 1. 错误处理
+
+```javascript
+render() {
+  if (!this._entity) {
+    return html`
+      <ha-card>
+        <div class="error">实体未找到: ${this.config.entity}</div>
+      </ha-card>
+    `;
+  }
+  // 正常渲染
+}
+```
+
+### 2. 状态管理
+
+```javascript
+updated(changedProperties) {
+  if (changedProperties.has("hass") || changedProperties.has("config")) {
+    this._updateEntities();
+  }
+}
+
+_updateEntities() {
+  if (!this.hass || !this.config) return;
+  this._entity = this.hass.states[this.config.entity];
+}
+```
+
+### 3. 条件渲染
+
+```javascript
+// 使用三元运算符
+${this.config.show_title ? html`<div class="title">标题</div>` : ""}
+
+// 使用 && 运算符
+${this._entity && html`<div>${this._entity.state}</div>`}
+```
+
+### 4. 事件处理
+
+```javascript
+// 使用箭头函数绑定 this
+@click=${() => this._handleClick()}
+
+// 传递参数
+@click=${() => this._handleModeChange("制热")}
+```
+
+### 5. 样式变量
+
+使用 CSS 变量支持主题：
+
+```css
+color: var(--primary-text-color);
+background: var(--card-background-color, #fff);
+```
+
+## 依赖管理
+
+### Home Assistant 内置（无需安装）
+
+- `lit` - Web Components 框架
+- `mwc-*` - Material Web Components
+- `ha-*` - Home Assistant 核心组件
+
+### 外部依赖
+
+- 在 `DEPENDENCIES.md` 中说明
+- 在 `README.md` 中列出
+- 在 `hacs.json` 中指定最低版本要求
+
+## 版本管理
+
+- 使用语义化版本（Semantic Versioning）
+- 格式：`MAJOR.MINOR.PATCH`（如 `1.0.0`）
+- Git 标签格式：`[card-name]-v[version]`（如 `air-conditioner-card-v1.0.0`）
+
+## 测试要求
+
+- 在不同浏览器中测试（Chrome, Firefox, Safari）
+- 测试不同主题（亮色/暗色）
+- 测试响应式布局
+- 验证所有功能正常工作
+
+## 代码质量
+
+- 使用 ESLint 或 Prettier（可选）
+- 保持代码简洁易读
+- 添加必要的注释
+- 遵循单一职责原则
+
+## 常见模式
+
+### 模式切换按钮
+
+```javascript
+${["模式1", "模式2", "模式3"].map(
+  (mode) => html`
+    <mwc-button
+      class="${this._currentMode === mode ? "active" : ""}"
+      @click=${() => this._handleModeChange(mode)}
+    >
+      ${mode}
+    </mwc-button>
+  `
+)}
+```
+
+### 实体状态显示
+
+```javascript
+_getStateText() {
+  if (!this._entity) return "未知";
+  return `${this._entity.state} - ${this._entity.attributes.value}`;
+}
+```
+
+### 动态样式
+
+```javascript
+_getCardClass() {
+  return `card ${this._entity?.state === "on" ? "active" : "inactive"}`;
+}
+```
+
+## 注意事项
+
+1. **不要使用 jQuery 或其他外部库**（除非必要）
+2. **避免直接操作 DOM**（使用 Lit 的响应式系统）
+3. **确保卡片在实体不存在时也能正常显示**
+4. **支持暗色主题**
+5. **保持向后兼容性**
+6. **文档要完整清晰**
+
+## 参考资源
+
+- [Lit 文档](https://lit.dev/)
+- [Home Assistant 开发文档](https://developers.home-assistant.io/)
+- [HACS 文档](https://hacs.xyz/docs/)
+- [Material Design](https://material.io/design)
