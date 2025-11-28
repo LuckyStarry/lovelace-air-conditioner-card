@@ -1,8 +1,8 @@
 {
   "domain": "air_conditioner_card",
   "name": "Air Conditioner Card",
-  "documentation": "https://github.com/LuckyStarry/luckystarry-lovelace-cards",
-  "issue_tracker": "https://github.com/LuckyStarry/luckystarry-lovelace-cards/issues",
+  "documentation": "https://github.com/LuckyStarry/lovelace-air-conditioner-card",
+  "issue_tracker": "https://github.com/LuckyStarry/lovelace-air-conditioner-card/issues",
   "codeowners": ["@LuckyStarry"],
   "version": "1.0.0",
   "dependencies": [],
