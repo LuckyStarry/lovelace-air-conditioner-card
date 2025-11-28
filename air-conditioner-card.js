@@ -488,3 +488,11 @@ class AirConditionerCard extends LitElement {
 }
 
 customElements.define("air-conditioner-card", AirConditionerCard);
+
+// 注册到 window.customCards（可选，但有助于 HACS 识别）
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "air-conditioner-card",
+  name: "Air Conditioner Card",
+  description: "空调控制自定义卡片",
+});
