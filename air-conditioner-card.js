@@ -351,8 +351,24 @@ class AirConditionerCard extends HTMLElement {
         padding: 8px;
       }
 
-      .graph-section {
-        margin-top: 12px;
+      .sensor-info {
+        display: flex;
+        gap: 16px;
+        margin-top: 4px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      .sensor-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .sensor-item ha-icon {
+        width: 16px;
+        height: 16px;
+        color: rgba(0, 0, 0, 0.5);
       }
 
       .error {
@@ -427,6 +443,38 @@ class AirConditionerCard extends HTMLElement {
     status.textContent = this._getStatusText();
     titleInfo.appendChild(label);
     titleInfo.appendChild(status);
+
+    // 添加温湿度信息（如果配置了传感器）
+    if (this._tempEntity || this._humiEntity) {
+      const sensorInfo = document.createElement("div");
+      sensorInfo.className = "sensor-info";
+
+      if (this._tempEntity) {
+        const tempItem = document.createElement("div");
+        tempItem.className = "sensor-item";
+        const tempIcon = document.createElement("ha-icon");
+        tempIcon.setAttribute("icon", "mdi:thermometer");
+        const tempText = document.createElement("span");
+        tempText.textContent = `${this._tempEntity.state}°`;
+        tempItem.appendChild(tempIcon);
+        tempItem.appendChild(tempText);
+        sensorInfo.appendChild(tempItem);
+      }
+
+      if (this._humiEntity) {
+        const humiItem = document.createElement("div");
+        humiItem.className = "sensor-item";
+        const humiIcon = document.createElement("ha-icon");
+        humiIcon.setAttribute("icon", "mdi:water-percent");
+        const humiText = document.createElement("span");
+        humiText.textContent = `${this._humiEntity.state}%`;
+        humiItem.appendChild(humiIcon);
+        humiItem.appendChild(humiText);
+        sensorInfo.appendChild(humiItem);
+      }
+
+      titleInfo.appendChild(sensorInfo);
+    }
 
     titleSection.appendChild(iconWrapper);
     titleSection.appendChild(titleInfo);
@@ -555,28 +603,6 @@ class AirConditionerCard extends HTMLElement {
     }
 
     controlsSection.appendChild(controlChips);
-
-    // 图表区域
-    if (
-      this._config.show_graph !== false &&
-      (this._tempEntity || this._humiEntity)
-    ) {
-      const graphSection = document.createElement("div");
-      graphSection.className = "graph-section";
-      const graphPlaceholder = document.createElement("div");
-      graphPlaceholder.className = "graph-placeholder";
-      const p1 = document.createElement("p");
-      p1.textContent = "图表功能需要 mini-graph-card 支持";
-      const p2 = document.createElement("p");
-      p2.textContent = `温度: ${this._tempEntity?.state || "N/A"}`;
-      const p3 = document.createElement("p");
-      p3.textContent = `湿度: ${this._humiEntity?.state || "N/A"}`;
-      graphPlaceholder.appendChild(p1);
-      graphPlaceholder.appendChild(p2);
-      graphPlaceholder.appendChild(p3);
-      graphSection.appendChild(graphPlaceholder);
-      cardContent.appendChild(graphSection);
-    }
 
     // 组装
     cardContent.appendChild(header);
