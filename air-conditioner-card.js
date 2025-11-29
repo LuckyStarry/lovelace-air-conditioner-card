@@ -272,9 +272,24 @@ class AirConditionerCard extends HTMLElement {
       }
 
       .icon-wrapper ha-icon {
-        width: 64px;
-        height: 64px;
+        width: 80px;
+        height: 80px;
         color: var(--mode-color, var(--primary-color));
+        transition: transform 0.3s ease;
+      }
+
+      /* 空调开启时，风扇图标旋转动画 */
+      .icon-wrapper ha-icon.spinning {
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .title-info {
@@ -479,26 +494,6 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.3) !important;
       }
 
-      .sensor-info {
-        display: flex;
-        gap: 16px;
-        margin-top: 4px;
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      .sensor-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .sensor-item ha-icon {
-        width: 16px;
-        height: 16px;
-        color: rgba(0, 0, 0, 0.5);
-      }
-
       .error {
         padding: 16px;
         color: var(--error-color);
@@ -559,6 +554,10 @@ class AirConditionerCard extends HTMLElement {
     iconWrapper.className = "icon-wrapper";
     const headerIcon = document.createElement("ha-icon");
     headerIcon.setAttribute("icon", "mdi:fan");
+    // 空调开启时添加旋转动画
+    if (!isOff) {
+      headerIcon.classList.add("spinning");
+    }
     iconWrapper.appendChild(headerIcon);
 
     const titleInfo = document.createElement("div");
@@ -567,38 +566,6 @@ class AirConditionerCard extends HTMLElement {
     label.className = "label";
     label.textContent = this._config.name || "空调";
     titleInfo.appendChild(label);
-
-    // 添加温湿度信息（如果配置了传感器）
-    if (this._tempEntity || this._humiEntity) {
-      const sensorInfo = document.createElement("div");
-      sensorInfo.className = "sensor-info";
-
-      if (this._tempEntity) {
-        const tempItem = document.createElement("div");
-        tempItem.className = "sensor-item";
-        const tempIcon = document.createElement("ha-icon");
-        tempIcon.setAttribute("icon", "mdi:thermometer");
-        const tempText = document.createElement("span");
-        tempText.textContent = `${this._tempEntity.state}°`;
-        tempItem.appendChild(tempIcon);
-        tempItem.appendChild(tempText);
-        sensorInfo.appendChild(tempItem);
-      }
-
-      if (this._humiEntity) {
-        const humiItem = document.createElement("div");
-        humiItem.className = "sensor-item";
-        const humiIcon = document.createElement("ha-icon");
-        humiIcon.setAttribute("icon", "mdi:water-percent");
-        const humiText = document.createElement("span");
-        humiText.textContent = `${this._humiEntity.state}%`;
-        humiItem.appendChild(humiIcon);
-        humiItem.appendChild(humiText);
-        sensorInfo.appendChild(humiItem);
-      }
-
-      titleInfo.appendChild(sensorInfo);
-    }
 
     titleSection.appendChild(iconWrapper);
     titleSection.appendChild(titleInfo);
