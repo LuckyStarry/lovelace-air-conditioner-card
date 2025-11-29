@@ -244,8 +244,7 @@ class AirConditionerCard extends HTMLElement {
       }
 
       /* 未启动状态下确保文字清晰可见 */
-      .air-conditioner-card.off .label,
-      .air-conditioner-card.off .status {
+      .air-conditioner-card.off .label {
         color: rgba(0, 0, 0, 0.87) !important;
       }
 
@@ -289,13 +288,6 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.85);
       }
 
-      .status {
-        font-size: 14px;
-        font-weight: 400;
-        text-transform: uppercase;
-        color: rgba(0, 0, 0, 0.85);
-        margin-top: 6px;
-      }
 
       .temperature-section {
         display: flex;
@@ -574,11 +566,7 @@ class AirConditionerCard extends HTMLElement {
     const label = document.createElement("div");
     label.className = "label";
     label.textContent = this._config.name || "空调";
-    const status = document.createElement("div");
-    status.className = "status";
-    status.textContent = this._getStatusText();
     titleInfo.appendChild(label);
-    titleInfo.appendChild(status);
 
     // 添加温湿度信息（如果配置了传感器）
     if (this._tempEntity || this._humiEntity) {
