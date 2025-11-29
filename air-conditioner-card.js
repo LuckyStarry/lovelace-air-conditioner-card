@@ -319,6 +319,7 @@ class AirConditionerCard extends HTMLElement {
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
+        cursor: pointer;
       }
 
       .temp-btn ::slotted(*) {
@@ -398,6 +399,7 @@ class AirConditionerCard extends HTMLElement {
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
       }
 
       /* 风速按钮：更小更紧凑的图标按钮 */
@@ -415,6 +417,7 @@ class AirConditionerCard extends HTMLElement {
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
       }
 
       .mode-chip ::slotted(*),
