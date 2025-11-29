@@ -397,11 +397,24 @@ class AirConditionerCard extends HTMLElement {
         gap: 8px;
       }
 
-      .mode-chip,
-      .control-chip {
-        min-width: 60px;
-        padding: 8px 12px;
+      /* 模式按钮：保持相对大一些的宽度，便于点击和阅读文字 */
+      .mode-chip {
+        min-width: 72px;
+        padding: 8px 14px;
         border-radius: 20px;
+        --mdc-theme-primary: var(--mode-color, var(--primary-color));
+        background-color: rgba(255, 255, 255, 0.3) !important;
+        color: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        transition: all 0.3s ease;
+      }
+
+      /* 风速按钮：更小更紧凑的图标按钮 */
+      .control-chip {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 4px 6px;
+        border-radius: 16px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
         background-color: rgba(255, 255, 255, 0.3) !important;
         color: rgba(0, 0, 0, 0.5) !important;
