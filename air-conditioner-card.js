@@ -268,19 +268,19 @@ class AirConditionerCard extends HTMLElement {
       .title-section {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 4px;
       }
 
       .icon-wrapper {
-        width: 80px;
-        height: 80px;
+        width: 56px;
+        height: 56px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
 
       .icon-wrapper ha-icon {
-        --mdc-icon-size: 80px !important;
+        --mdc-icon-size: 56px !important;
         color: var(--mode-color, var(--primary-color)) !important;
         transition: transform 0.3s ease;
       }
@@ -310,8 +310,8 @@ class AirConditionerCard extends HTMLElement {
       }
 
       .label {
-        font-size: 26px;
-        font-weight: 300;
+        font-size: 20px;
+        font-weight: 500;
         color: rgba(0, 0, 0, 0.85);
       }
 
@@ -419,16 +419,20 @@ class AirConditionerCard extends HTMLElement {
         gap: 8px;
       }
 
-      /* 模式按钮：保持相对大一些的宽度，便于点击和阅读文字 */
+      /* 模式按钮：宽度自适应内容，减少右侧空白 */
       .mode-chip {
-        min-width: 72px;
-        padding: 8px 14px;
-        border-radius: 20px;
+        padding: 6px 12px;
+        border-radius: 16px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
         background-color: rgba(255, 255, 255, 0.3) !important;
         color: rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(0, 0, 0, 0.06) !important;
         transition: all 0.3s ease;
+        font-size: 14px;
+        white-space: nowrap;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       /* 风速按钮：更小更紧凑的图标按钮 */
@@ -452,7 +456,12 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.5) !important;
       }
 
-      .mode-chip ha-icon,
+      .mode-chip ha-icon {
+        --mdc-icon-size: 18px !important;
+        color: rgba(0, 0, 0, 0.5) !important;
+        margin-right: 4px;
+      }
+
       .control-chip ha-icon {
         color: rgba(0, 0, 0, 0.5) !important;
       }
@@ -567,7 +576,7 @@ class AirConditionerCard extends HTMLElement {
     const headerIcon = document.createElement("ha-icon");
     headerIcon.setAttribute("icon", "mdi:fan");
     // 设置 CSS 变量控制图标大小
-    headerIcon.style.setProperty("--mdc-icon-size", "80px");
+    headerIcon.style.setProperty("--mdc-icon-size", "56px");
     // 空调开启时添加旋转动画
     if (!isOff) {
       headerIcon.classList.add("spinning");
