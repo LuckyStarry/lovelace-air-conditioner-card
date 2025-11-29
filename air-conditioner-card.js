@@ -233,8 +233,14 @@ class AirConditionerCard extends HTMLElement {
         );
       }
 
+      /* 关机状态：使用柔和的浅色渐变背景，避免过暗的蒙版效果 */
       .air-conditioner-card.off {
-        background: var(--card-background-color, #fff);
+        background: linear-gradient(
+          145deg,
+          #e0e0e0 -20%,
+          #f5f5f5 50%,
+          #ffffff 100%
+        );
       }
 
       /* 未启动状态下确保文字清晰可见 */
@@ -370,13 +376,25 @@ class AirConditionerCard extends HTMLElement {
       .mode-section {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
       }
 
       .controls-section {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+      }
+
+      /* 模式按钮容器：适中间距，整体紧凑 */
+      .mode-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      /* 风速按钮容器：适中间距，避免按钮完全挨在一起 */
+      .control-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
       }
 
       .mode-chip,
