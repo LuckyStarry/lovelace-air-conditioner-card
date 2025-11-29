@@ -285,8 +285,22 @@ class AirConditionerCard extends HTMLElement {
 
       .current-temp {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .current-temp-wrapper {
+        display: flex;
         align-items: center;
         gap: 12px;
+      }
+
+      .temp-label {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6)));
+        line-height: 1;
       }
 
       .temp-icon {
@@ -604,14 +618,25 @@ class AirConditionerCard extends HTMLElement {
 
     const currentTempDiv = document.createElement("div");
     currentTempDiv.className = "current-temp";
+
+    // 添加"当前温度"标签
+    const tempLabel = document.createElement("div");
+    tempLabel.className = "temp-label";
+    tempLabel.textContent = "当前温度";
+    currentTempDiv.appendChild(tempLabel);
+
+    // 温度值和图标容器
+    const tempWrapper = document.createElement("div");
+    tempWrapper.className = "current-temp-wrapper";
     const tempIcon = document.createElement("ha-icon");
     tempIcon.setAttribute("icon", "mdi:thermometer");
     tempIcon.className = "temp-icon";
     const tempValue = document.createElement("span");
     tempValue.className = "temp-value";
     tempValue.textContent = `${Math.round(currentTemp)}°`;
-    currentTempDiv.appendChild(tempIcon);
-    currentTempDiv.appendChild(tempValue);
+    tempWrapper.appendChild(tempIcon);
+    tempWrapper.appendChild(tempValue);
+    currentTempDiv.appendChild(tempWrapper);
 
     const tempControls = document.createElement("div");
     tempControls.className = "temp-controls";
