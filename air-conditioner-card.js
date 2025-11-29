@@ -919,6 +919,12 @@ class AirConditionerCardEditor extends HTMLElement {
         --mdc-text-field-label-ink-color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
         --mdc-text-field-ink-color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
       }
+      
+      ha-entity-picker {
+        display: block !important;
+        width: 100% !important;
+        min-height: 56px !important;
+      }
     `;
 
     const editor = document.createElement("div");
@@ -1061,6 +1067,20 @@ class AirConditionerCardEditor extends HTMLElement {
       if (picker.requestUpdate) {
         picker.requestUpdate();
       }
+
+      // 检查 picker 的实际渲染状态
+      console.log("[AirConditionerCardEditor] Picker render check", {
+        offsetWidth: picker.offsetWidth,
+        offsetHeight: picker.offsetHeight,
+        clientWidth: picker.clientWidth,
+        clientHeight: picker.clientHeight,
+        display: window.getComputedStyle(picker).display,
+        visibility: window.getComputedStyle(picker).visibility,
+        opacity: window.getComputedStyle(picker).opacity,
+        innerHTML: picker.innerHTML
+          ? picker.innerHTML.substring(0, 100)
+          : "empty",
+      });
     } catch (e) {
       console.error(
         "[AirConditionerCardEditor] Error setting picker properties",
