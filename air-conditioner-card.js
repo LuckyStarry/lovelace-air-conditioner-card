@@ -411,10 +411,10 @@ class AirConditionerCard extends HTMLElement {
 
       /* 风速按钮：更小更紧凑的图标按钮 */
       .control-chip {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 4px 6px;
-        border-radius: 16px;
+        min-width: 28px;
+        min-height: 28px;
+        padding: 2px;
+        border-radius: 14px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
         background-color: rgba(255, 255, 255, 0.3) !important;
         color: rgba(0, 0, 0, 0.5) !important;
