@@ -923,119 +923,70 @@ class AirConditionerCardEditor extends HTMLElement {
     entityLabel.textContent = "空调实体 *";
 
     // 等待 ha-entity-picker 组件定义后再创建和设置属性
-    const isComponentDefined = !!customElements.get("ha-entity-picker");
     console.log("[AirConditionerCardEditor] Creating ha-entity-picker", {
-      componentDefined: isComponentDefined,
+      componentDefined: !!customElements.get("ha-entity-picker"),
     });
 
-    // 如果组件未定义，等待定义完成
-    const createPicker = async () => {
-      if (!isComponentDefined) {
-        console.log(
-          "[AirConditionerCardEditor] Waiting for ha-entity-picker definition..."
-        );
-        try {
-          await customElements.whenDefined("ha-entity-picker");
-          console.log(
-            "[AirConditionerCardEditor] ha-entity-picker is now defined"
-          );
-        } catch (e) {
-          console.error(
-            "[AirConditionerCardEditor] Error waiting for component definition",
-            e
-          );
-        }
-      }
+    const entityPicker = document.createElement("ha-entity-picker");
+    console.log(
+      "[AirConditionerCardEditor] ha-entity-picker created",
+      entityPicker
+    );
 
-      const entityPicker = document.createElement("ha-entity-picker");
+    // 添加值变更监听（在设置属性之前）
+    entityPicker.addEventListener("value-changed", (ev) => {
       console.log(
-        "[AirConditionerCardEditor] ha-entity-picker created",
-        entityPicker
+        "[AirConditionerCardEditor] Entity picker value changed",
+        ev.detail.value
       );
-
-      // 添加值变更监听（在设置属性之前）
-      entityPicker.addEventListener("value-changed", (ev) => {
-        console.log(
-          "[AirConditionerCardEditor] Entity picker value changed",
-          ev.detail.value
-        );
-        if (!this._config) {
-          this._config = {};
-        }
-        this._config.entity = ev.detail.value;
-        this._fireConfigChanged();
-      });
-
-      const entityHelp = document.createElement("div");
-      entityHelp.className = "editor-help";
-      entityHelp.textContent = "选择要控制的空调实体";
-      entityRow.appendChild(entityLabel);
-      entityRow.appendChild(entityPicker);
-      entityRow.appendChild(entityHelp);
-
-      editor.appendChild(nameRow);
-      editor.appendChild(entityRow);
-
-      // 在添加到 DOM 之前，先设置属性
-      // 先设置 hass（如果可用），然后设置其他属性
-      if (this._hass) {
-        entityPicker.hass = this._hass;
+      if (!this._config) {
+        this._config = {};
       }
-      entityPicker.includeDomains = ["climate"];
-      entityPicker.value = (this._config && this._config.entity) || "";
+      this._config.entity = ev.detail.value;
+      this._fireConfigChanged();
+    });
 
-      console.log(
-        "[AirConditionerCardEditor] Properties set before DOM append",
-        {
-          hasHass: !!entityPicker.hass,
-          includeDomains: entityPicker.includeDomains,
-          value: entityPicker.value,
-        }
-      );
+    const entityHelp = document.createElement("div");
+    entityHelp.className = "editor-help";
+    entityHelp.textContent = "选择要控制的空调实体";
+    entityRow.appendChild(entityLabel);
+    entityRow.appendChild(entityPicker);
+    entityRow.appendChild(entityHelp);
 
-      // 将 editor 添加到 DOM（如果还没有添加）
-      if (!this.contains(editor)) {
-        // 不使用 shadow DOM，直接操作元素
-        // ha-entity-picker 可能需要访问外部上下文
-        if (this.innerHTML) {
-          this.innerHTML = "";
-        }
-        // 添加样式（使用 <style> 标签）
-        const styleElement = document.createElement("style");
-        styleElement.textContent = style.textContent;
-        this.appendChild(styleElement);
-        this.appendChild(editor);
-      }
+    editor.appendChild(nameRow);
+    editor.appendChild(entityRow);
 
-      // 等待元素连接到 DOM 后再检查 shadowRoot
+    // 在添加到 DOM 之前，先设置属性
+    // 先设置 hass（如果可用），然后设置其他属性
+    if (this._hass) {
+      entityPicker.hass = this._hass;
+    }
+    entityPicker.includeDomains = ["climate"];
+    entityPicker.value = (this._config && this._config.entity) || "";
+
+    console.log("[AirConditionerCardEditor] Properties set before DOM append", {
+      hasHass: !!entityPicker.hass,
+      includeDomains: entityPicker.includeDomains,
+      value: entityPicker.value,
+    });
+
+    // 不使用 shadow DOM，直接操作元素
+    // ha-entity-picker 可能需要访问外部上下文
+    this.innerHTML = "";
+    // 添加样式（使用 <style> 标签）
+    const styleElement = document.createElement("style");
+    styleElement.textContent = style.textContent;
+    this.appendChild(styleElement);
+    this.appendChild(editor);
+
+    this._hasRendered = true;
+
+    // 元素已添加到 DOM，再次确保属性正确设置
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!entityPicker.shadowRoot) {
-            console.warn(
-              "[AirConditionerCardEditor] Picker still has no shadowRoot after DOM append"
-            );
-            // 尝试强制触发初始化
-            if (this._hass) {
-              entityPicker.hass = null;
-              setTimeout(() => {
-                entityPicker.hass = this._hass;
-                entityPicker.includeDomains = ["climate"];
-                entityPicker.value =
-                  (this._config && this._config.entity) || "";
-              }, 50);
-            }
-          } else {
-            console.log(
-              "[AirConditionerCardEditor] Picker has shadowRoot, initialization successful"
-            );
-          }
-          this._setupEntityPicker();
-        });
+        this._setupEntityPicker();
       });
-    };
-
-    // 立即执行或等待组件定义
-    createPicker();
+    });
   }
 
   _setupEntityPicker() {
