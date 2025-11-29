@@ -420,6 +420,9 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(0, 0, 0, 0.06) !important;
         transition: all 0.3s ease;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       .mode-chip ::slotted(*),
@@ -430,6 +433,12 @@ class AirConditionerCard extends HTMLElement {
       .mode-chip ha-icon,
       .control-chip ha-icon {
         color: rgba(0, 0, 0, 0.5) !important;
+      }
+
+      .control-chip ha-icon {
+        width: 24px;
+        height: 24px;
+        margin: 0;
       }
 
       .mode-chip:hover:not(:disabled),
