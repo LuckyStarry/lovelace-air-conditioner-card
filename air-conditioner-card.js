@@ -785,10 +785,10 @@ class AirConditionerCardEditor extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     if (this.shadowRoot) {
-      const pickers = this.shadowRoot.querySelectorAll("ha-entity-picker");
-      pickers.forEach((picker) => {
+      const picker = this.shadowRoot.querySelector("ha-entity-picker");
+      if (picker) {
         picker.hass = hass;
-      });
+      }
       // 如果已经渲染，重新渲染以更新 hass
       this._render();
     }
@@ -873,12 +873,7 @@ class AirConditionerCardEditor extends HTMLElement {
     entityLabel.className = "editor-label";
     entityLabel.textContent = "空调实体 *";
     const entityPicker = document.createElement("ha-entity-picker");
-    if (this._hass) {
-      entityPicker.hass = this._hass;
-    }
-    // 只显示 climate 域的实体（温控器）
-    entityPicker.includeDomains = ["climate"];
-    entityPicker.value = (this._config && this._config.entity) || "";
+    // 添加值变更监听（在设置属性之前）
     entityPicker.addEventListener("value-changed", (ev) => {
       if (!this._config) {
         this._config = {};
@@ -886,6 +881,7 @@ class AirConditionerCardEditor extends HTMLElement {
       this._config.entity = ev.detail.value;
       this._fireConfigChanged();
     });
+
     const entityHelp = document.createElement("div");
     entityHelp.className = "editor-help";
     entityHelp.textContent = "选择要控制的空调实体";
@@ -899,6 +895,21 @@ class AirConditionerCardEditor extends HTMLElement {
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(style);
     this.shadowRoot.appendChild(editor);
+
+    // 在元素添加到 DOM 后设置属性
+    // 使用 setTimeout 确保元素已完全渲染
+    setTimeout(() => {
+      const picker = this.shadowRoot.querySelector("ha-entity-picker");
+      if (picker) {
+        // 先设置 hass
+        if (this._hass) {
+          picker.hass = this._hass;
+        }
+        // 然后设置其他属性
+        picker.includeDomains = ["climate"];
+        picker.value = (this._config && this._config.entity) || "";
+      }
+    }, 0);
   }
 
   _fireConfigChanged() {
