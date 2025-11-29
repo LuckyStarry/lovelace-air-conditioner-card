@@ -1026,7 +1026,19 @@ class AirConditionerCardEditor extends HTMLElement {
       return;
     }
 
-    // 先设置其他属性（在设置 hass 之前）
+    // 先设置 hass（必须在设置其他属性之前）
+    if (this._hass) {
+      try {
+        picker.hass = this._hass;
+        console.log("[AirConditionerCardEditor] Hass set first", {
+          pickerHass: !!picker.hass,
+        });
+      } catch (e) {
+        console.error("[AirConditionerCardEditor] Error setting hass first", e);
+      }
+    }
+
+    // 然后设置其他属性
     try {
       picker.includeDomains = ["climate"];
       picker.value = (this._config && this._config.entity) || "";
@@ -1034,7 +1046,21 @@ class AirConditionerCardEditor extends HTMLElement {
         includeDomains: picker.includeDomains,
         value: picker.value,
         pickerHass: !!picker.hass,
+        pickerConnected: picker.isConnected,
+        pickerParent: picker.parentElement
+          ? picker.parentElement.tagName
+          : "N/A",
       });
+
+      // 强制触发更新
+      if (picker.updateComplete) {
+        picker.updateComplete.then(() => {
+          console.log("[AirConditionerCardEditor] Picker updateComplete");
+        });
+      }
+      if (picker.requestUpdate) {
+        picker.requestUpdate();
+      }
     } catch (e) {
       console.error(
         "[AirConditionerCardEditor] Error setting picker properties",
