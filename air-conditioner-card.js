@@ -475,12 +475,6 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.3) !important;
       }
 
-      .control-chip {
-        min-width: 44px;
-        min-height: 44px;
-        padding: 8px;
-      }
-
       .sensor-info {
         display: flex;
         gap: 16px;
