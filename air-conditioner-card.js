@@ -280,17 +280,9 @@ class AirConditionerCard extends HTMLElement {
       }
 
       .icon-wrapper ha-icon {
-        width: 80px !important;
-        height: 80px !important;
+        --mdc-icon-size: 80px !important;
         color: var(--mode-color, var(--primary-color)) !important;
         transition: transform 0.3s ease;
-        display: block !important;
-      }
-
-      /* 确保 SVG 图标也应用大小 */
-      .icon-wrapper ha-icon svg {
-        width: 80px !important;
-        height: 80px !important;
       }
 
       /* 空调开启时，风扇图标旋转动画 */
@@ -298,7 +290,8 @@ class AirConditionerCard extends HTMLElement {
         animation: spin 2s linear infinite !important;
       }
 
-      .icon-wrapper ha-icon.spinning svg {
+      /* 确保 ha-svg-icon 内部元素也旋转 */
+      .icon-wrapper ha-icon.spinning ha-svg-icon {
         animation: spin 2s linear infinite !important;
       }
 
@@ -573,9 +566,8 @@ class AirConditionerCard extends HTMLElement {
     iconWrapper.className = "icon-wrapper";
     const headerIcon = document.createElement("ha-icon");
     headerIcon.setAttribute("icon", "mdi:fan");
-    // 直接设置内联样式确保生效
-    headerIcon.style.width = "80px";
-    headerIcon.style.height = "80px";
+    // 设置 CSS 变量控制图标大小
+    headerIcon.style.setProperty("--mdc-icon-size", "80px");
     // 空调开启时添加旋转动画
     if (!isOff) {
       headerIcon.classList.add("spinning");
