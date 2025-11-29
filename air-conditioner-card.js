@@ -956,6 +956,20 @@ class AirConditionerCardEditor extends HTMLElement {
     editor.appendChild(nameRow);
     editor.appendChild(entityRow);
 
+    // 在添加到 DOM 之前，先设置属性
+    // 先设置 hass（如果可用），然后设置其他属性
+    if (this._hass) {
+      entityPicker.hass = this._hass;
+    }
+    entityPicker.includeDomains = ["climate"];
+    entityPicker.value = (this._config && this._config.entity) || "";
+
+    console.log("[AirConditionerCardEditor] Properties set before DOM append", {
+      hasHass: !!entityPicker.hass,
+      includeDomains: entityPicker.includeDomains,
+      value: entityPicker.value,
+    });
+
     // 不使用 shadow DOM，直接操作元素
     // ha-entity-picker 可能需要访问外部上下文
     this.innerHTML = "";
@@ -965,12 +979,7 @@ class AirConditionerCardEditor extends HTMLElement {
     this.appendChild(styleElement);
     this.appendChild(editor);
 
-    // 直接设置属性，不等待组件定义
-    // Home Assistant 的组件是懒加载的，但设置属性后会自动触发组件加载
-    console.log(
-      "[AirConditionerCardEditor] Will set properties (component may be lazy-loaded)"
-    );
-    // 使用多重延迟，确保元素已完全添加到 DOM
+    // 元素已添加到 DOM，再次确保属性正确设置
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this._setupEntityPicker();
@@ -1029,6 +1038,19 @@ class AirConditionerCardEditor extends HTMLElement {
         picker.requestUpdate();
       }
 
+      // 尝试访问 shadowRoot 并强制更新
+      if (picker.shadowRoot) {
+        console.log("[AirConditionerCardEditor] Picker has shadowRoot");
+        // 尝试触发内部更新
+        const mwcSelect = picker.shadowRoot.querySelector("mwc-select");
+        if (mwcSelect) {
+          console.log("[AirConditionerCardEditor] Found mwc-select in picker");
+          if (mwcSelect.requestUpdate) {
+            mwcSelect.requestUpdate();
+          }
+        }
+      }
+
       // 检查 picker 的实际渲染状态
       console.log("[AirConditionerCardEditor] Picker render check", {
         offsetWidth: picker.offsetWidth,
@@ -1041,6 +1063,7 @@ class AirConditionerCardEditor extends HTMLElement {
         innerHTML: picker.innerHTML
           ? picker.innerHTML.substring(0, 100)
           : "empty",
+        hasShadowRoot: !!picker.shadowRoot,
       });
     } catch (e) {
       console.error(
