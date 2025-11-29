@@ -795,7 +795,15 @@ class AirConditionerCardEditor extends HTMLElement {
       // 如果已经渲染，更新 picker 的 hass
       const picker = this.shadowRoot.querySelector("ha-entity-picker");
       if (picker) {
-        picker.hass = hass;
+        // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
+        requestAnimationFrame(() => {
+          const currentPicker =
+            this.shadowRoot.querySelector("ha-entity-picker");
+          if (currentPicker && this._hass) {
+            // 直接设置 hass，让 ha-entity-picker 自己处理 localize
+            currentPicker.hass = this._hass;
+          }
+        });
       } else {
         // 如果还没有渲染，现在渲染
         this._render();
@@ -909,19 +917,27 @@ class AirConditionerCardEditor extends HTMLElement {
     this.shadowRoot.appendChild(editor);
 
     // 在元素添加到 DOM 后设置属性
-    // 使用 setTimeout 确保元素已完全渲染
-    setTimeout(() => {
+    // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
+    requestAnimationFrame(() => {
       const picker = this.shadowRoot.querySelector("ha-entity-picker");
       if (picker) {
-        // 先设置 hass
-        if (this._hass) {
-          picker.hass = this._hass;
-        }
-        // 然后设置其他属性
+        // 先设置其他属性（在设置 hass 之前）
         picker.includeDomains = ["climate"];
         picker.value = (this._config && this._config.entity) || "";
+        // 然后设置 hass（使用 requestAnimationFrame 再次延迟，确保属性已设置）
+        if (this._hass) {
+          requestAnimationFrame(() => {
+            const currentPicker =
+              this.shadowRoot.querySelector("ha-entity-picker");
+            if (currentPicker && this._hass) {
+              // 直接设置 hass，让 ha-entity-picker 自己处理 localize
+              // 不检查 localize，因为这是 Home Assistant 内部的问题
+              currentPicker.hass = this._hass;
+            }
+          });
+        }
       }
-    }, 0);
+    });
   }
 
   _fireConfigChanged() {
