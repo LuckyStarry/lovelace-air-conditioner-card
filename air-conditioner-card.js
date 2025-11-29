@@ -118,11 +118,11 @@ class AirConditionerCard extends HTMLElement {
     if (this._entity.state === "off") {
       return `OFF - ${Math.round(
         this._entity.attributes.current_temperature || 0
-      )}°`;
+      )}℃`;
     }
     const preset = this._entity.attributes.preset_mode || "AUTO";
     const temp = Math.round(this._entity.attributes.current_temperature || 0);
-    return `${preset} - ${temp}°`;
+    return `${preset} - ${temp}℃`;
   }
 
   _handleToggle() {
@@ -640,7 +640,7 @@ class AirConditionerCard extends HTMLElement {
     tempIcon.className = "temp-icon";
     const tempValue = document.createElement("span");
     tempValue.className = "temp-value";
-    tempValue.textContent = `${Math.round(currentTemp)}°`;
+    tempValue.textContent = `${Math.round(currentTemp)}℃`;
     tempWrapper.appendChild(tempIcon);
     tempWrapper.appendChild(tempValue);
     currentTempDiv.appendChild(tempWrapper);
@@ -669,7 +669,7 @@ class AirConditionerCard extends HTMLElement {
 
     const targetTempDiv = document.createElement("div");
     targetTempDiv.className = "target-temp";
-    targetTempDiv.textContent = `${Math.round(targetTemp)}°`;
+    targetTempDiv.textContent = `${Math.round(targetTemp)}℃`;
 
     const plusBtn = document.createElement("mwc-button");
     plusBtn.className = "temp-btn";
