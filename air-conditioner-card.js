@@ -196,7 +196,7 @@ class AirConditionerCard extends HTMLElement {
     const style = document.createElement("style");
     style.textContent = `
       .air-conditioner-card {
-        padding: 25px;
+        padding: 16px;
         border-radius: 12px;
         transition: background 0.3s ease;
       }
@@ -256,7 +256,7 @@ class AirConditionerCard extends HTMLElement {
       .card-content {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
       }
 
       .header {
@@ -320,7 +320,7 @@ class AirConditionerCard extends HTMLElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px 0;
+        padding: 12px 0;
       }
 
       .current-temp {
