@@ -970,6 +970,12 @@ class AirConditionerCardEditor extends HTMLElement {
       value: entityPicker.value,
     });
 
+    // 尝试触发 connectedCallback（如果组件已经定义）
+    // 这可能会帮助组件正确初始化
+    if (entityPicker.connectedCallback && !entityPicker.isConnected) {
+      // 暂时不调用，因为元素还没有连接到 DOM
+    }
+
     // 不使用 shadow DOM，直接操作元素
     // ha-entity-picker 可能需要访问外部上下文
     this.innerHTML = "";
@@ -978,8 +984,6 @@ class AirConditionerCardEditor extends HTMLElement {
     styleElement.textContent = style.textContent;
     this.appendChild(styleElement);
     this.appendChild(editor);
-
-    this._hasRendered = true;
 
     // 元素已添加到 DOM，再次确保属性正确设置
     requestAnimationFrame(() => {
