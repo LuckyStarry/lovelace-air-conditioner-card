@@ -198,54 +198,8 @@ class AirConditionerCard extends HTMLElement {
       .air-conditioner-card {
         padding: 16px;
         border-radius: var(--ha-card-border-radius, 12px);
-        transition: background 0.3s ease, box-shadow 0.3s ease;
+        transition: box-shadow 0.3s ease;
         background: var(--ha-card-background, var(--card-background-color, #ffffff)) !important;
-        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
-      }
-
-      .air-conditioner-card.制热 {
-        background: linear-gradient(
-          145deg,
-          rgba(247, 198, 157, 0.15) 0%,
-          rgba(255, 255, 255, 0.95) 50%,
-          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
-        ) !important;
-        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(247, 198, 157, 0.1);
-      }
-
-      .air-conditioner-card.制冷 {
-        background: linear-gradient(
-          145deg,
-          rgba(100, 149, 237, 0.15) 0%,
-          rgba(255, 255, 255, 0.95) 50%,
-          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
-        ) !important;
-        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(100, 149, 237, 0.1);
-      }
-
-      .air-conditioner-card.除湿 {
-        background: linear-gradient(
-          145deg,
-          rgba(132, 112, 255, 0.15) 0%,
-          rgba(255, 255, 255, 0.95) 50%,
-          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
-        ) !important;
-        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(132, 112, 255, 0.1);
-      }
-
-      .air-conditioner-card.送风 {
-        background: linear-gradient(
-          145deg,
-          rgba(0, 188, 212, 0.15) 0%,
-          rgba(255, 255, 255, 0.95) 50%,
-          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
-        ) !important;
-        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(0, 188, 212, 0.1);
-      }
-
-      /* 关机状态：使用柔和的浅色背景 */
-      .air-conditioner-card.off {
-        background: var(--ha-card-background, var(--card-background-color, #fafafa)) !important;
         box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
       }
 
