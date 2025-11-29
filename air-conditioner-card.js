@@ -970,6 +970,12 @@ class AirConditionerCardEditor extends HTMLElement {
       value: entityPicker.value,
     });
 
+    // 尝试触发 connectedCallback（如果组件已经定义）
+    // 这可能会帮助组件正确初始化
+    if (entityPicker.connectedCallback && !entityPicker.isConnected) {
+      // 暂时不调用，因为元素还没有连接到 DOM
+    }
+
     // 不使用 shadow DOM，直接操作元素
     // ha-entity-picker 可能需要访问外部上下文
     this.innerHTML = "";
@@ -1048,6 +1054,28 @@ class AirConditionerCardEditor extends HTMLElement {
           if (mwcSelect.requestUpdate) {
             mwcSelect.requestUpdate();
           }
+        }
+      } else {
+        console.warn(
+          "[AirConditionerCardEditor] Picker has no shadowRoot - component may not be initialized"
+        );
+        // 如果组件还没有 shadowRoot，可能需要等待更长时间
+        // 或者强制重新设置 hass 来触发初始化
+        if (this._hass) {
+          setTimeout(() => {
+            const retryPicker = this.querySelector("ha-entity-picker");
+            if (retryPicker && !retryPicker.shadowRoot) {
+              console.log(
+                "[AirConditionerCardEditor] Retrying hass assignment to trigger initialization"
+              );
+              retryPicker.hass = null; // 先清空
+              setTimeout(() => {
+                retryPicker.hass = this._hass;
+                retryPicker.includeDomains = ["climate"];
+                retryPicker.value = (this._config && this._config.entity) || "";
+              }, 10);
+            }
+          }, 200);
         }
       }
 
