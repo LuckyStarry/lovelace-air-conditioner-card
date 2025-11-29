@@ -92,12 +92,12 @@ class AirConditionerCard extends HTMLElement {
 
   _getModeColor(presetMode) {
     const colors = {
-      制热: "#f7c69d",
-      制冷: "#1E90FF",
-      除湿: "#9370DB",
-      送风: "#00BCD4",
+      制热: "#FF6B35", // 更深的橙色，提高对比度
+      制冷: "#1976D2", // 更深的蓝色，提高对比度
+      除湿: "#7B1FA2", // 更深的紫色，提高对比度
+      送风: "#00838F", // 更深的青色，提高对比度
     };
-    return colors[presetMode] || "#4CAF50";
+    return colors[presetMode] || "#388E3C"; // 更深的绿色
   }
 
   _getModeGradient(presetMode) {
@@ -458,11 +458,19 @@ class AirConditionerCard extends HTMLElement {
         border-color: var(--mode-color, var(--primary-color)) !important;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
         transform: translateY(-1px);
+        filter: brightness(0.9) saturate(1.1);
       }
 
       .mode-chip.active ::slotted(*),
       .control-chip.active ::slotted(*) {
         color: white !important;
+        font-weight: 500;
+      }
+
+      .mode-chip.active ha-icon,
+      .control-chip.active ha-icon {
+        color: white !important;
+        filter: none;
       }
 
       .mode-chip:disabled,
