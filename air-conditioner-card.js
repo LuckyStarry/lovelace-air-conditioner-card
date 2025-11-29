@@ -801,7 +801,7 @@ class AirConditionerCardEditor extends HTMLElement {
       .editor-label {
         display: block;
         margin-bottom: 8px;
-        color: var(--ha-text-primary-color, rgba(0, 0, 0, 0.87));
+        color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
         font-weight: 500;
       }
       .editor-help {
@@ -809,6 +809,12 @@ class AirConditionerCardEditor extends HTMLElement {
         margin-top: 4px;
         font-size: 12px;
         color: var(--ha-text-secondary-color, rgba(0, 0, 0, 0.6));
+      }
+      
+      ha-textfield {
+        --mdc-theme-primary: var(--primary-color, #03a9f4);
+        --mdc-text-field-label-ink-color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
+        --mdc-text-field-ink-color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
       }
     `;
 
@@ -824,6 +830,7 @@ class AirConditionerCardEditor extends HTMLElement {
     const nameInput = document.createElement("ha-textfield");
     nameInput.label = "名称";
     nameInput.value = (this._config && this._config.name) || "";
+    nameInput.style.setProperty("--mdc-theme-primary", "var(--primary-color)");
     nameInput.addEventListener("input", (ev) => {
       if (!this._config) {
         this._config = {};
@@ -848,6 +855,8 @@ class AirConditionerCardEditor extends HTMLElement {
     if (this._hass) {
       entityPicker.hass = this._hass;
     }
+    // 只显示 climate 域的实体（温控器）
+    entityPicker.includeDomains = ["climate"];
     entityPicker.value = (this._config && this._config.entity) || "";
     entityPicker.addEventListener("value-changed", (ev) => {
       if (!this._config) {
