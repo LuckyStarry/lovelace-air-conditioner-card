@@ -319,7 +319,12 @@ class AirConditionerCard extends HTMLElement {
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
-        cursor: pointer;
+        cursor: pointer !important;
+      }
+
+      .temp-btn,
+      .temp-btn * {
+        cursor: pointer !important;
       }
 
       .temp-btn ::slotted(*) {
@@ -399,7 +404,12 @@ class AirConditionerCard extends HTMLElement {
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        cursor: pointer;
+        cursor: pointer !important;
+      }
+
+      .mode-chip,
+      .mode-chip * {
+        cursor: pointer !important;
       }
 
       /* 风速按钮：更小更紧凑的图标按钮 */
@@ -417,7 +427,12 @@ class AirConditionerCard extends HTMLElement {
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        cursor: pointer;
+        cursor: pointer !important;
+      }
+
+      .control-chip,
+      .control-chip * {
+        cursor: pointer !important;
       }
 
       .mode-chip ::slotted(*),
@@ -602,6 +617,7 @@ class AirConditionerCard extends HTMLElement {
     tempControls.className = "temp-controls";
     const minusBtn = document.createElement("mwc-button");
     minusBtn.className = "temp-btn";
+    minusBtn.style.cursor = "pointer";
     minusBtn.disabled = isOff;
     minusBtn.addEventListener("click", () => this._handleSetTemperature(-0.5));
     const minusIcon = document.createElement("ha-icon");
@@ -614,6 +630,7 @@ class AirConditionerCard extends HTMLElement {
 
     const plusBtn = document.createElement("mwc-button");
     plusBtn.className = "temp-btn";
+    plusBtn.style.cursor = "pointer";
     plusBtn.disabled = isOff;
     plusBtn.addEventListener("click", () => this._handleSetTemperature(0.5));
     const plusIcon = document.createElement("ha-icon");
@@ -636,6 +653,7 @@ class AirConditionerCard extends HTMLElement {
     ["制热", "制冷", "除湿", "送风"].forEach((mode) => {
       const modeBtn = document.createElement("mwc-button");
       modeBtn.className = `mode-chip ${presetMode === mode ? "active" : ""}`;
+      modeBtn.style.cursor = "pointer";
       modeBtn.disabled = isOff;
       modeBtn.style.setProperty("--mode-color", this._getModeColor(mode));
       modeBtn.addEventListener("click", () => this._handleSetPresetMode(mode));
@@ -662,6 +680,7 @@ class AirConditionerCard extends HTMLElement {
     this._getFanModes().forEach((fan) => {
       const fanBtn = document.createElement("mwc-button");
       fanBtn.className = `control-chip ${fanMode === fan.mode ? "active" : ""}`;
+      fanBtn.style.cursor = "pointer";
       fanBtn.disabled = isOff;
       fanBtn.addEventListener("click", () => this._handleSetFanMode(fan.mode));
 
@@ -675,6 +694,7 @@ class AirConditionerCard extends HTMLElement {
     if (this._hass.states[beepSwitch]) {
       const beepBtn = document.createElement("mwc-button");
       beepBtn.className = `control-chip ${beepState ? "active" : ""}`;
+      beepBtn.style.cursor = "pointer";
       beepBtn.addEventListener("click", () =>
         this._handleToggleSwitch(beepSwitch)
       );
@@ -687,6 +707,7 @@ class AirConditionerCard extends HTMLElement {
     if (this._hass.states[scheduleSwitch]) {
       const scheduleBtn = document.createElement("mwc-button");
       scheduleBtn.className = `control-chip ${scheduleState ? "active" : ""}`;
+      scheduleBtn.style.cursor = "pointer";
       scheduleBtn.addEventListener("click", () =>
         this._handleToggleSwitch(scheduleSwitch)
       );
