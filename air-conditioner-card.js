@@ -757,31 +757,52 @@ class AirConditionerCard extends HTMLElement {
   }
 }
 
-if (!customElements.get("air-conditioner-card")) {
-  customElements.define("air-conditioner-card", AirConditionerCard);
-
-  // 注册到 window.customCards（可选，但有助于 HACS 识别）
-  window.customCards = window.customCards || [];
-  window.customCards.push({
-    type: "air-conditioner-card",
-    name: "Air Conditioner Card",
-    description: "空调控制自定义卡片",
-  });
-}
-
 /**
  * 配置编辑器
  */
 class AirConditionerCardEditor extends HTMLElement {
+  constructor() {
+    super();
+    this._config = {};
+    this._hass = null;
+  }
+
   setConfig(config) {
     this._config = config || {};
+    // 如果已经连接到 DOM，立即渲染
+    if (this.isConnected && !this.shadowRoot) {
+      this.attachShadow({ mode: "open" });
+    }
+    if (this.shadowRoot) {
+      this._render();
+    }
   }
 
   get config() {
     return this._config;
   }
 
+  set hass(hass) {
+    this._hass = hass;
+    if (this.shadowRoot) {
+      const pickers = this.shadowRoot.querySelectorAll("ha-entity-picker");
+      pickers.forEach((picker) => {
+        picker.hass = hass;
+      });
+      // 如果已经渲染，重新渲染以更新 hass
+      this._render();
+    }
+  }
+
+  get hass() {
+    return this._hass;
+  }
+
   connectedCallback() {
+    // 确保在连接时渲染
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: "open" });
+    }
     this._render();
   }
 
@@ -880,20 +901,6 @@ class AirConditionerCardEditor extends HTMLElement {
     this.shadowRoot.appendChild(editor);
   }
 
-  set hass(hass) {
-    this._hass = hass;
-    if (this.shadowRoot) {
-      const pickers = this.shadowRoot.querySelectorAll("ha-entity-picker");
-      pickers.forEach((picker) => {
-        picker.hass = hass;
-      });
-    }
-    // 如果已经渲染，重新渲染以更新 hass
-    if (this.shadowRoot && this.shadowRoot.querySelector(".editor")) {
-      this._render();
-    }
-  }
-
   _fireConfigChanged() {
     const event = new CustomEvent("config-changed", {
       detail: { config: this._config },
@@ -904,9 +911,23 @@ class AirConditionerCardEditor extends HTMLElement {
   }
 }
 
+// 先注册配置编辑器
 if (!customElements.get("air-conditioner-card-editor")) {
   customElements.define(
     "air-conditioner-card-editor",
     AirConditionerCardEditor
   );
+}
+
+// 再注册主卡片
+if (!customElements.get("air-conditioner-card")) {
+  customElements.define("air-conditioner-card", AirConditionerCard);
+
+  // 注册到 window.customCards（可选，但有助于 HACS 识别）
+  window.customCards = window.customCards || [];
+  window.customCards.push({
+    type: "air-conditioner-card",
+    name: "Air Conditioner Card",
+    description: "空调控制自定义卡片",
+  });
 }
