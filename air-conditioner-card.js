@@ -817,7 +817,15 @@ class AirConditionerCardEditor extends HTMLElement {
       console.log("[AirConditionerCardEditor] Picker found:", !!picker);
       if (picker) {
         // 检查是否已经设置过，避免循环调用
-        if (picker.hass !== this._hass) {
+        // 注意：picker.hass 可能是 undefined，所以需要检查对象引用
+        const pickerHass = picker.hass;
+        const isHassSet =
+          pickerHass &&
+          this._hass &&
+          (pickerHass === this._hass ||
+            (pickerHass.states === this._hass.states &&
+              pickerHass.localize === this._hass.localize));
+        if (!isHassSet) {
           // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
           requestAnimationFrame(() => {
             const currentPicker =
@@ -1002,15 +1010,28 @@ class AirConditionerCardEditor extends HTMLElement {
       console.log(
         "[AirConditionerCardEditor] Component not defined, waiting..."
       );
+      // 设置超时，避免无限等待
+      const timeout = setTimeout(() => {
+        console.warn(
+          "[AirConditionerCardEditor] Component definition timeout (5s), setting properties anyway"
+        );
+        this._setupEntityPicker();
+      }, 5000); // 5秒超时
+
       customElements
         .whenDefined("ha-entity-picker")
         .then(() => {
+          clearTimeout(timeout);
           console.log(
             "[AirConditionerCardEditor] Component defined, setting properties"
           );
-          this._setupEntityPicker();
+          // 延迟一下，确保组件完全初始化
+          requestAnimationFrame(() => {
+            this._setupEntityPicker();
+          });
         })
         .catch((err) => {
+          clearTimeout(timeout);
           console.error(
             "[AirConditionerCardEditor] Failed to wait for component",
             err
