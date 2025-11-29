@@ -197,10 +197,10 @@ class AirConditionerCard extends HTMLElement {
     style.textContent = `
       .air-conditioner-card {
         padding: 16px;
-        border-radius: 12px;
+        border-radius: var(--ha-card-border-radius, 12px);
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        background: var(--card-background-color, #ffffff) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+        background: var(--ha-card-background, var(--card-background-color, #ffffff)) !important;
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
       }
 
       .air-conditioner-card.制热 {
@@ -208,9 +208,9 @@ class AirConditionerCard extends HTMLElement {
           145deg,
           rgba(247, 198, 157, 0.15) 0%,
           rgba(255, 255, 255, 0.95) 50%,
-          var(--card-background-color, #ffffff) 100%
+          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
         ) !important;
-        box-shadow: 0 2px 8px rgba(247, 198, 157, 0.2), 0 1px 2px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(247, 198, 157, 0.1);
       }
 
       .air-conditioner-card.制冷 {
@@ -218,9 +218,9 @@ class AirConditionerCard extends HTMLElement {
           145deg,
           rgba(100, 149, 237, 0.15) 0%,
           rgba(255, 255, 255, 0.95) 50%,
-          var(--card-background-color, #ffffff) 100%
+          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
         ) !important;
-        box-shadow: 0 2px 8px rgba(100, 149, 237, 0.2), 0 1px 2px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(100, 149, 237, 0.1);
       }
 
       .air-conditioner-card.除湿 {
@@ -228,9 +228,9 @@ class AirConditionerCard extends HTMLElement {
           145deg,
           rgba(132, 112, 255, 0.15) 0%,
           rgba(255, 255, 255, 0.95) 50%,
-          var(--card-background-color, #ffffff) 100%
+          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
         ) !important;
-        box-shadow: 0 2px 8px rgba(132, 112, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(132, 112, 255, 0.1);
       }
 
       .air-conditioner-card.送风 {
@@ -238,25 +238,25 @@ class AirConditionerCard extends HTMLElement {
           145deg,
           rgba(0, 188, 212, 0.15) 0%,
           rgba(255, 255, 255, 0.95) 50%,
-          var(--card-background-color, #ffffff) 100%
+          var(--ha-card-background, var(--card-background-color, #ffffff)) 100%
         ) !important;
-        box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2), 0 1px 2px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1)), 0 0 0 1px rgba(0, 188, 212, 0.1);
       }
 
       /* 关机状态：使用柔和的浅色背景 */
       .air-conditioner-card.off {
-        background: var(--card-background-color, #fafafa) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+        background: var(--ha-card-background, var(--card-background-color, #fafafa)) !important;
+        box-shadow: var(--ha-card-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
       }
 
       /* 未启动状态下确保文字清晰可见 */
       .air-conditioner-card.off .label {
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .air-conditioner-card.off .temp-value,
       .air-conditioner-card.off .target-temp {
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .card-content {
@@ -318,7 +318,7 @@ class AirConditionerCard extends HTMLElement {
       .label {
         font-size: 20px;
         font-weight: 500;
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87));
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87)));
       }
 
 
@@ -338,13 +338,13 @@ class AirConditionerCard extends HTMLElement {
       .temp-icon {
         width: 40px;
         height: 40px;
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6));
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6)));
       }
 
       .temp-value {
         font-size: 40px;
         font-weight: 300;
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87));
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87)));
       }
 
       .temp-controls {
@@ -357,8 +357,8 @@ class AirConditionerCard extends HTMLElement {
         min-width: 40px;
         min-height: 40px;
         --mdc-theme-primary: var(--primary-color, rgba(0, 0, 0, 0.6));
-        background-color: var(--card-background-color, rgba(255, 255, 255, 0.9)) !important;
-        border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12)) !important;
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.9))) !important;
+        border: 1px solid var(--ha-divider-color, var(--divider-color, rgba(0, 0, 0, 0.12))) !important;
         border-radius: 8px;
         display: flex !important;
         align-items: center !important;
@@ -368,28 +368,28 @@ class AirConditionerCard extends HTMLElement {
       }
 
       .temp-btn ::slotted(*) {
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.7)) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.7))) !important;
       }
 
       .temp-btn ha-icon {
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.7)) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.7))) !important;
         width: 24px;
         height: 24px;
         margin: 0;
       }
 
       .temp-btn:hover:not(:disabled) {
-        background-color: var(--card-background-color, rgba(255, 255, 255, 1)) !important;
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 1))) !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transform: translateY(-1px);
       }
 
       .temp-btn:hover:not(:disabled) ::slotted(*) {
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .temp-btn:hover:not(:disabled) ha-icon {
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .temp-btn:disabled {
@@ -400,7 +400,7 @@ class AirConditionerCard extends HTMLElement {
       .target-temp {
         font-size: 32px;
         font-weight: 300;
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87));
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87)));
         min-width: 60px;
         text-align: center;
       }
@@ -434,9 +434,9 @@ class AirConditionerCard extends HTMLElement {
         padding: 6px 12px;
         border-radius: 16px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
-        background-color: var(--card-background-color, rgba(255, 255, 255, 0.6)) !important;
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6)) !important;
-        border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12)) !important;
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.6))) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6))) !important;
+        border: 1px solid var(--ha-divider-color, var(--divider-color, rgba(0, 0, 0, 0.12))) !important;
         transition: all 0.3s ease;
         font-size: 14px;
         white-space: nowrap;
@@ -453,9 +453,9 @@ class AirConditionerCard extends HTMLElement {
         padding: 2px;
         border-radius: 14px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
-        background-color: var(--card-background-color, rgba(255, 255, 255, 0.6)) !important;
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6)) !important;
-        border: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12)) !important;
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.6))) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6))) !important;
+        border: 1px solid var(--ha-divider-color, var(--divider-color, rgba(0, 0, 0, 0.12))) !important;
         transition: all 0.3s ease;
         display: flex !important;
         align-items: center !important;
@@ -465,17 +465,17 @@ class AirConditionerCard extends HTMLElement {
 
       .mode-chip ::slotted(*),
       .control-chip ::slotted(*) {
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6)) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6))) !important;
       }
 
       .mode-chip ha-icon {
         --mdc-icon-size: 18px !important;
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6)) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6))) !important;
         margin-right: 4px;
       }
 
       .control-chip ha-icon {
-        color: var(--secondary-text-color, rgba(0, 0, 0, 0.6)) !important;
+        color: var(--ha-text-secondary-color, var(--secondary-text-color, rgba(0, 0, 0, 0.6))) !important;
       }
 
       .control-chip ha-icon {
@@ -486,15 +486,15 @@ class AirConditionerCard extends HTMLElement {
 
       .mode-chip:hover:not(:disabled),
       .control-chip:hover:not(:disabled) {
-        background-color: var(--card-background-color, rgba(255, 255, 255, 0.9)) !important;
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.9))) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         transform: translateY(-1px);
       }
 
       .mode-chip:hover:not(:disabled) ::slotted(*),
       .control-chip:hover:not(:disabled) ::slotted(*) {
-        color: var(--primary-text-color, rgba(0, 0, 0, 0.87)) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .mode-chip.active,
