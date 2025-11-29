@@ -9,8 +9,6 @@ class AirConditionerCard extends HTMLElement {
     this._hass = null;
     this._config = null;
     this._entity = null;
-    this._tempEntity = null;
-    this._humiEntity = null;
     this._initialRender = false;
   }
 
@@ -23,17 +21,9 @@ class AirConditionerCard extends HTMLElement {
     const climateEntities = entities.filter((eid) =>
       eid.startsWith("climate.")
     );
-    const tempEntities = entities.filter(
-      (eid) => eid.startsWith("sensor.") && eid.includes("temperature")
-    );
-    const humiEntities = entities.filter(
-      (eid) => eid.startsWith("sensor.") && eid.includes("humidity")
-    );
 
     return {
       entity: climateEntities[0] || "",
-      temp_entity: tempEntities[0] || "",
-      humi_entity: humiEntities[0] || "",
       name: "空调",
     };
   }
@@ -82,12 +72,6 @@ class AirConditionerCard extends HTMLElement {
     if (!this._hass || !this._config) return;
 
     this._entity = this._hass.states[this._config.entity];
-    if (this._config.temp_entity) {
-      this._tempEntity = this._hass.states[this._config.temp_entity];
-    }
-    if (this._config.humi_entity) {
-      this._humiEntity = this._hass.states[this._config.humi_entity];
-    }
   }
 
   _getModeColor(presetMode) {
@@ -831,28 +815,6 @@ class AirConditionerCardEditor extends HTMLElement {
     const editor = document.createElement("div");
     editor.className = "editor";
 
-    // 空调实体
-    const entityRow = document.createElement("div");
-    entityRow.className = "editor-row";
-    const entityLabel = document.createElement("label");
-    entityLabel.className = "editor-label";
-    entityLabel.textContent = "空调实体 *";
-    const entityPicker = document.createElement("ha-entity-picker");
-    if (this._hass) {
-      entityPicker.hass = this._hass;
-    }
-    entityPicker.value = this._config.entity || "";
-    entityPicker.addEventListener("value-changed", (ev) => {
-      this._config.entity = ev.detail.value;
-      this._fireConfigChanged();
-    });
-    const entityHelp = document.createElement("div");
-    entityHelp.className = "editor-help";
-    entityHelp.textContent = "选择要控制的空调实体";
-    entityRow.appendChild(entityLabel);
-    entityRow.appendChild(entityPicker);
-    entityRow.appendChild(entityHelp);
-
     // 卡片名称
     const nameRow = document.createElement("div");
     nameRow.className = "editor-row";
@@ -861,8 +823,11 @@ class AirConditionerCardEditor extends HTMLElement {
     nameLabel.textContent = "卡片名称";
     const nameInput = document.createElement("ha-textfield");
     nameInput.label = "名称";
-    nameInput.value = this._config.name || "";
+    nameInput.value = (this._config && this._config.name) || "";
     nameInput.addEventListener("input", (ev) => {
+      if (!this._config) {
+        this._config = {};
+      }
       this._config.name = ev.target.value;
       this._fireConfigChanged();
     });
@@ -873,100 +838,33 @@ class AirConditionerCardEditor extends HTMLElement {
     nameRow.appendChild(nameInput);
     nameRow.appendChild(nameHelp);
 
-    // 温度传感器
-    const tempEntityRow = document.createElement("div");
-    tempEntityRow.className = "editor-row";
-    const tempEntityLabel = document.createElement("label");
-    tempEntityLabel.className = "editor-label";
-    tempEntityLabel.textContent = "温度传感器";
-    const tempEntityPicker = document.createElement("ha-entity-picker");
+    // 空调实体
+    const entityRow = document.createElement("div");
+    entityRow.className = "editor-row";
+    const entityLabel = document.createElement("label");
+    entityLabel.className = "editor-label";
+    entityLabel.textContent = "空调实体 *";
+    const entityPicker = document.createElement("ha-entity-picker");
     if (this._hass) {
-      tempEntityPicker.hass = this._hass;
+      entityPicker.hass = this._hass;
     }
-    tempEntityPicker.value = this._config.temp_entity || "";
-    tempEntityPicker.addEventListener("value-changed", (ev) => {
-      this._config.temp_entity = ev.detail.value;
+    entityPicker.value = (this._config && this._config.entity) || "";
+    entityPicker.addEventListener("value-changed", (ev) => {
+      if (!this._config) {
+        this._config = {};
+      }
+      this._config.entity = ev.detail.value;
       this._fireConfigChanged();
     });
-    const tempEntityHelp = document.createElement("div");
-    tempEntityHelp.className = "editor-help";
-    tempEntityHelp.textContent = "用于显示当前环境温度（可选）";
-    tempEntityRow.appendChild(tempEntityLabel);
-    tempEntityRow.appendChild(tempEntityPicker);
-    tempEntityRow.appendChild(tempEntityHelp);
+    const entityHelp = document.createElement("div");
+    entityHelp.className = "editor-help";
+    entityHelp.textContent = "选择要控制的空调实体";
+    entityRow.appendChild(entityLabel);
+    entityRow.appendChild(entityPicker);
+    entityRow.appendChild(entityHelp);
 
-    // 湿度传感器
-    const humiEntityRow = document.createElement("div");
-    humiEntityRow.className = "editor-row";
-    const humiEntityLabel = document.createElement("label");
-    humiEntityLabel.className = "editor-label";
-    humiEntityLabel.textContent = "湿度传感器";
-    const humiEntityPicker = document.createElement("ha-entity-picker");
-    if (this._hass) {
-      humiEntityPicker.hass = this._hass;
-    }
-    humiEntityPicker.value = this._config.humi_entity || "";
-    humiEntityPicker.addEventListener("value-changed", (ev) => {
-      this._config.humi_entity = ev.detail.value;
-      this._fireConfigChanged();
-    });
-    const humiEntityHelp = document.createElement("div");
-    humiEntityHelp.className = "editor-help";
-    humiEntityHelp.textContent = "用于显示当前环境湿度（可选）";
-    humiEntityRow.appendChild(humiEntityLabel);
-    humiEntityRow.appendChild(humiEntityPicker);
-    humiEntityRow.appendChild(humiEntityHelp);
-
-    // 静音开关
-    const beepSwitchRow = document.createElement("div");
-    beepSwitchRow.className = "editor-row";
-    const beepSwitchLabel = document.createElement("label");
-    beepSwitchLabel.className = "editor-label";
-    beepSwitchLabel.textContent = "静音开关";
-    const beepSwitchPicker = document.createElement("ha-entity-picker");
-    if (this._hass) {
-      beepSwitchPicker.hass = this._hass;
-    }
-    beepSwitchPicker.value = this._config.beep_switch || "";
-    beepSwitchPicker.addEventListener("value-changed", (ev) => {
-      this._config.beep_switch = ev.detail.value;
-      this._fireConfigChanged();
-    });
-    const beepSwitchHelp = document.createElement("div");
-    beepSwitchHelp.className = "editor-help";
-    beepSwitchHelp.textContent = "用于控制静音功能的开关实体（可选）";
-    beepSwitchRow.appendChild(beepSwitchLabel);
-    beepSwitchRow.appendChild(beepSwitchPicker);
-    beepSwitchRow.appendChild(beepSwitchHelp);
-
-    // 定时开关
-    const scheduleSwitchRow = document.createElement("div");
-    scheduleSwitchRow.className = "editor-row";
-    const scheduleSwitchLabel = document.createElement("label");
-    scheduleSwitchLabel.className = "editor-label";
-    scheduleSwitchLabel.textContent = "定时开关";
-    const scheduleSwitchPicker = document.createElement("ha-entity-picker");
-    if (this._hass) {
-      scheduleSwitchPicker.hass = this._hass;
-    }
-    scheduleSwitchPicker.value = this._config.schedule_switch || "";
-    scheduleSwitchPicker.addEventListener("value-changed", (ev) => {
-      this._config.schedule_switch = ev.detail.value;
-      this._fireConfigChanged();
-    });
-    const scheduleSwitchHelp = document.createElement("div");
-    scheduleSwitchHelp.className = "editor-help";
-    scheduleSwitchHelp.textContent = "用于控制定时功能的开关实体（可选）";
-    scheduleSwitchRow.appendChild(scheduleSwitchLabel);
-    scheduleSwitchRow.appendChild(scheduleSwitchPicker);
-    scheduleSwitchRow.appendChild(scheduleSwitchHelp);
-
-    editor.appendChild(entityRow);
     editor.appendChild(nameRow);
-    editor.appendChild(tempEntityRow);
-    editor.appendChild(humiEntityRow);
-    editor.appendChild(beepSwitchRow);
-    editor.appendChild(scheduleSwitchRow);
+    editor.appendChild(entityRow);
 
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(style);
