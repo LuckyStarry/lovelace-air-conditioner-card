@@ -892,52 +892,76 @@ class AirConditionerCardEditor extends HTMLElement {
     const entityLabel = document.createElement("label");
     entityLabel.className = "editor-label";
     entityLabel.textContent = "空调实体 *";
-    const entityPicker = document.createElement("ha-entity-picker");
-    // 添加值变更监听（在设置属性之前）
-    entityPicker.addEventListener("value-changed", (ev) => {
-      if (!this._config) {
-        this._config = {};
+    // 确保 ha-entity-picker 组件已定义后再创建
+    const createEntityPicker = async () => {
+      // 等待 ha-entity-picker 组件定义完成
+      if (!customElements.get("ha-entity-picker")) {
+        await customElements.whenDefined("ha-entity-picker");
       }
-      this._config.entity = ev.detail.value;
-      this._fireConfigChanged();
-    });
 
-    const entityHelp = document.createElement("div");
-    entityHelp.className = "editor-help";
-    entityHelp.textContent = "选择要控制的空调实体";
-    entityRow.appendChild(entityLabel);
-    entityRow.appendChild(entityPicker);
-    entityRow.appendChild(entityHelp);
-
-    editor.appendChild(nameRow);
-    editor.appendChild(entityRow);
-
-    this.shadowRoot.innerHTML = "";
-    this.shadowRoot.appendChild(style);
-    this.shadowRoot.appendChild(editor);
-
-    // 在元素添加到 DOM 后设置属性
-    // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
-    requestAnimationFrame(() => {
-      const picker = this.shadowRoot.querySelector("ha-entity-picker");
-      if (picker) {
-        // 先设置其他属性（在设置 hass 之前）
-        picker.includeDomains = ["climate"];
-        picker.value = (this._config && this._config.entity) || "";
-        // 然后设置 hass（使用 requestAnimationFrame 再次延迟，确保属性已设置）
-        if (this._hass) {
-          requestAnimationFrame(() => {
-            const currentPicker =
-              this.shadowRoot.querySelector("ha-entity-picker");
-            if (currentPicker && this._hass) {
-              // 直接设置 hass，让 ha-entity-picker 自己处理 localize
-              // 不检查 localize，因为这是 Home Assistant 内部的问题
-              currentPicker.hass = this._hass;
-            }
-          });
+      const entityPicker = document.createElement("ha-entity-picker");
+      // 添加值变更监听（在设置属性之前）
+      entityPicker.addEventListener("value-changed", (ev) => {
+        if (!this._config) {
+          this._config = {};
         }
-      }
-    });
+        this._config.entity = ev.detail.value;
+        this._fireConfigChanged();
+      });
+
+      const entityHelp = document.createElement("div");
+      entityHelp.className = "editor-help";
+      entityHelp.textContent = "选择要控制的空调实体";
+      entityRow.appendChild(entityLabel);
+      entityRow.appendChild(entityPicker);
+      entityRow.appendChild(entityHelp);
+
+      editor.appendChild(nameRow);
+      editor.appendChild(entityRow);
+
+      this.shadowRoot.innerHTML = "";
+      this.shadowRoot.appendChild(style);
+      this.shadowRoot.appendChild(editor);
+
+      // 在元素添加到 DOM 后设置属性
+      // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
+      requestAnimationFrame(() => {
+        const picker = this.shadowRoot.querySelector("ha-entity-picker");
+        if (picker) {
+          // 先设置其他属性（在设置 hass 之前）
+          picker.includeDomains = ["climate"];
+          picker.value = (this._config && this._config.entity) || "";
+          // 然后设置 hass（使用 requestAnimationFrame 再次延迟，确保属性已设置）
+          if (this._hass) {
+            requestAnimationFrame(() => {
+              const currentPicker =
+                this.shadowRoot.querySelector("ha-entity-picker");
+              if (currentPicker && this._hass) {
+                // 直接设置 hass，让 ha-entity-picker 自己处理 localize
+                // 不检查 localize，因为这是 Home Assistant 内部的问题
+                currentPicker.hass = this._hass;
+              }
+            });
+          }
+        }
+      });
+    };
+
+    // 如果组件已定义，立即创建；否则等待定义完成
+    if (customElements.get("ha-entity-picker")) {
+      createEntityPicker();
+    } else {
+      // 等待组件定义，但设置超时避免无限等待
+      customElements
+        .whenDefined("ha-entity-picker")
+        .then(() => {
+          createEntityPicker();
+        })
+        .catch(() => {
+          // 如果等待失败，仍然尝试创建（可能组件已经定义但检查失败）
+          createEntityPicker();
+        });
+    }
   }
 
   _fireConfigChanged() {
