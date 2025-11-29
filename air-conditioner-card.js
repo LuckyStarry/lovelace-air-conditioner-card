@@ -314,6 +314,16 @@ class AirConditionerCard extends HTMLElement {
       .temp-btn {
         min-width: 40px;
         --mdc-theme-primary: rgba(0, 0, 0, 0.85);
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      }
+
+      .temp-btn ::slotted(*) {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+
+      .temp-btn:disabled {
+        opacity: 0.5;
       }
 
       .target-temp {
@@ -337,12 +347,40 @@ class AirConditionerCard extends HTMLElement {
         padding: 8px 12px;
         border-radius: 20px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+        transition: all 0.3s ease;
+      }
+
+      .mode-chip ::slotted(*),
+      .control-chip ::slotted(*) {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+
+      .mode-chip:hover,
+      .control-chip:hover {
+        background-color: rgba(255, 255, 255, 1) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .mode-chip.active,
       .control-chip.active {
-        background-color: var(--mode-color, var(--primary-color));
-        color: white;
+        background-color: var(--mode-color, var(--primary-color)) !important;
+        color: white !important;
+        border-color: var(--mode-color, var(--primary-color)) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .mode-chip.active ::slotted(*),
+      .control-chip.active ::slotted(*) {
+        color: white !important;
+      }
+
+      .mode-chip:disabled,
+      .control-chip:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
 
       .control-chip {
