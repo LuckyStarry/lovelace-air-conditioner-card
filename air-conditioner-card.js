@@ -769,12 +769,15 @@ class AirConditionerCardEditor extends HTMLElement {
 
   setConfig(config) {
     this._config = config || {};
-    // 如果已经连接到 DOM，立即渲染
-    if (this.isConnected && !this.shadowRoot) {
-      this.attachShadow({ mode: "open" });
-    }
-    if (this.shadowRoot) {
-      this._render();
+    // 如果已经连接到 DOM 且 hass 已设置，立即渲染
+    if (this.isConnected) {
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: "open" });
+      }
+      // 只有在 hass 已设置时才渲染，否则等待 hass setter
+      if (this._hass) {
+        this._render();
+      }
     }
   }
 
@@ -784,13 +787,19 @@ class AirConditionerCardEditor extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
-    if (this.shadowRoot) {
+    // 如果已经连接到 DOM，渲染或更新
+    if (this.isConnected) {
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: "open" });
+      }
+      // 如果已经渲染，更新 picker 的 hass
       const picker = this.shadowRoot.querySelector("ha-entity-picker");
       if (picker) {
         picker.hass = hass;
+      } else {
+        // 如果还没有渲染，现在渲染
+        this._render();
       }
-      // 如果已经渲染，重新渲染以更新 hass
-      this._render();
     }
   }
 
@@ -799,11 +808,14 @@ class AirConditionerCardEditor extends HTMLElement {
   }
 
   connectedCallback() {
-    // 确保在连接时渲染
+    // 确保在连接时渲染（如果 hass 和 config 都已设置）
     if (!this.shadowRoot) {
       this.attachShadow({ mode: "open" });
     }
-    this._render();
+    // 只有在 hass 已设置时才渲染
+    if (this._hass) {
+      this._render();
+    }
   }
 
   _render() {
