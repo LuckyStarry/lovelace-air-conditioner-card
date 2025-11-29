@@ -1005,49 +1005,17 @@ class AirConditionerCardEditor extends HTMLElement {
     this.shadowRoot.appendChild(style);
     this.shadowRoot.appendChild(editor);
 
-    // 如果组件未定义，等待定义完成后再设置属性
-    if (!customElements.get("ha-entity-picker")) {
-      console.log(
-        "[AirConditionerCardEditor] Component not defined, waiting..."
-      );
-      // 设置超时，避免无限等待
-      const timeout = setTimeout(() => {
-        console.warn(
-          "[AirConditionerCardEditor] Component definition timeout (5s), setting properties anyway"
-        );
-        this._setupEntityPicker();
-      }, 5000); // 5秒超时
-
-      customElements
-        .whenDefined("ha-entity-picker")
-        .then(() => {
-          clearTimeout(timeout);
-          console.log(
-            "[AirConditionerCardEditor] Component defined, setting properties"
-          );
-          // 延迟一下，确保组件完全初始化
-          requestAnimationFrame(() => {
-            this._setupEntityPicker();
-          });
-        })
-        .catch((err) => {
-          clearTimeout(timeout);
-          console.error(
-            "[AirConditionerCardEditor] Failed to wait for component",
-            err
-          );
-          // 即使失败也尝试设置
-          this._setupEntityPicker();
-        });
-    } else {
-      // 组件已定义，延迟设置属性
-      console.log(
-        "[AirConditionerCardEditor] Component already defined, will set properties"
-      );
+    // 直接设置属性，不等待组件定义
+    // Home Assistant 的组件是懒加载的，但设置属性后会自动触发组件加载
+    console.log(
+      "[AirConditionerCardEditor] Will set properties (component may be lazy-loaded)"
+    );
+    // 使用多重延迟，确保元素已完全添加到 DOM
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this._setupEntityPicker();
       });
-    }
+    });
   }
 
   _setupEntityPicker() {
@@ -1057,6 +1025,7 @@ class AirConditionerCardEditor extends HTMLElement {
       hasHass: !!this._hass,
       entityValue: (this._config && this._config.entity) || "",
       componentDefined: !!customElements.get("ha-entity-picker"),
+      pickerTagName: picker ? picker.tagName : "N/A",
     });
 
     if (!picker) {
@@ -1064,55 +1033,68 @@ class AirConditionerCardEditor extends HTMLElement {
       return;
     }
 
-    // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
-    requestAnimationFrame(() => {
-      const currentPicker = this.shadowRoot.querySelector("ha-entity-picker");
-      if (!currentPicker) {
-        console.warn(
-          "[AirConditionerCardEditor] Picker not found in requestAnimationFrame"
-        );
-        return;
-      }
-
-      // 先设置其他属性（在设置 hass 之前）
-      currentPicker.includeDomains = ["climate"];
-      currentPicker.value = (this._config && this._config.entity) || "";
+    // 先设置其他属性（在设置 hass 之前）
+    try {
+      picker.includeDomains = ["climate"];
+      picker.value = (this._config && this._config.entity) || "";
       console.log("[AirConditionerCardEditor] Picker properties set", {
-        includeDomains: currentPicker.includeDomains,
-        value: currentPicker.value,
+        includeDomains: picker.includeDomains,
+        value: picker.value,
+        pickerHass: !!picker.hass,
       });
+    } catch (e) {
+      console.error(
+        "[AirConditionerCardEditor] Error setting picker properties",
+        e
+      );
+    }
 
-      // 然后设置 hass（使用 requestAnimationFrame 再次延迟，确保属性已设置）
-      if (this._hass) {
-        requestAnimationFrame(() => {
-          const finalPicker = this.shadowRoot.querySelector("ha-entity-picker");
-          console.log(
-            "[AirConditionerCardEditor] Setting hass to picker in second frame",
-            {
-              hasPicker: !!finalPicker,
-              hasHass: !!this._hass,
-            }
-          );
-          if (finalPicker && this._hass) {
+    // 然后设置 hass（延迟设置，确保属性已设置）
+    if (this._hass) {
+      // 使用 setTimeout 而不是 requestAnimationFrame，给组件更多时间初始化
+      setTimeout(() => {
+        const finalPicker = this.shadowRoot.querySelector("ha-entity-picker");
+        console.log("[AirConditionerCardEditor] Setting hass to picker", {
+          hasPicker: !!finalPicker,
+          hasHass: !!this._hass,
+          pickerHass: finalPicker ? !!finalPicker.hass : false,
+        });
+        if (finalPicker && this._hass) {
+          try {
             // 检查是否已经设置过，避免循环
-            if (finalPicker.hass !== this._hass) {
+            if (!finalPicker.hass || finalPicker.hass !== this._hass) {
               finalPicker.hass = this._hass;
               console.log(
-                "[AirConditionerCardEditor] Hass set to picker in second frame"
+                "[AirConditionerCardEditor] Hass set to picker successfully"
               );
+              // 再次设置属性，确保组件已初始化
+              if (finalPicker.includeDomains) {
+                finalPicker.includeDomains = ["climate"];
+              }
+              if (
+                finalPicker.value !==
+                ((this._config && this._config.entity) || "")
+              ) {
+                finalPicker.value = (this._config && this._config.entity) || "";
+              }
             } else {
               console.log(
                 "[AirConditionerCardEditor] Hass already set, skipping"
               );
             }
+          } catch (e) {
+            console.error(
+              "[AirConditionerCardEditor] Error setting hass to picker",
+              e
+            );
           }
-        });
-      } else {
-        console.log(
-          "[AirConditionerCardEditor] Hass not available, will be set later"
-        );
-      }
-    });
+        }
+      }, 100); // 100ms 延迟，给组件初始化时间
+    } else {
+      console.log(
+        "[AirConditionerCardEditor] Hass not available, will be set later"
+      );
+    }
   }
 
   _fireConfigChanged() {
