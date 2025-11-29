@@ -333,8 +333,11 @@ class AirConditionerCard extends HTMLElement {
         min-height: 40px;
         --mdc-theme-primary: rgba(0, 0, 0, 0.6);
         background-color: rgba(255, 255, 255, 0.8) !important;
-        border: 1px solid rgba(0, 0, 0, 0.15) !important;
+        border: none !important;
         border-radius: 8px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       .temp-btn ::slotted(*) {
@@ -345,11 +348,11 @@ class AirConditionerCard extends HTMLElement {
         color: rgba(0, 0, 0, 0.7) !important;
         width: 24px;
         height: 24px;
+        margin: 0;
       }
 
       .temp-btn:hover:not(:disabled) {
         background-color: rgba(255, 255, 255, 1) !important;
-        border-color: rgba(0, 0, 0, 0.25) !important;
       }
 
       .temp-btn:hover:not(:disabled) ::slotted(*) {
