@@ -237,6 +237,17 @@ class AirConditionerCard extends HTMLElement {
         background: var(--card-background-color, #fff);
       }
 
+      /* 未启动状态下确保文字清晰可见 */
+      .air-conditioner-card.off .label,
+      .air-conditioner-card.off .status {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+
+      .air-conditioner-card.off .temp-value,
+      .air-conditioner-card.off .target-temp {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+
       .card-content {
         display: flex;
         flex-direction: column;
@@ -315,22 +326,32 @@ class AirConditionerCard extends HTMLElement {
         min-width: 40px;
         min-height: 40px;
         --mdc-theme-primary: rgba(0, 0, 0, 0.6);
-        background-color: transparent !important;
-        border: 1px solid rgba(0, 0, 0, 0.2) !important;
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        border: 1px solid rgba(0, 0, 0, 0.15) !important;
         border-radius: 8px;
       }
 
       .temp-btn ::slotted(*) {
-        color: rgba(0, 0, 0, 0.6) !important;
+        color: rgba(0, 0, 0, 0.7) !important;
+      }
+
+      .temp-btn ha-icon {
+        color: rgba(0, 0, 0, 0.7) !important;
+        width: 24px;
+        height: 24px;
       }
 
       .temp-btn:hover:not(:disabled) {
-        background-color: rgba(0, 0, 0, 0.05) !important;
-        border-color: rgba(0, 0, 0, 0.3) !important;
+        background-color: rgba(255, 255, 255, 1) !important;
+        border-color: rgba(0, 0, 0, 0.25) !important;
       }
 
       .temp-btn:hover:not(:disabled) ::slotted(*) {
-        color: rgba(0, 0, 0, 0.8) !important;
+        color: rgba(0, 0, 0, 0.9) !important;
+      }
+
+      .temp-btn:hover:not(:disabled) ha-icon {
+        color: rgba(0, 0, 0, 0.9) !important;
       }
 
       .temp-btn:disabled {
@@ -346,11 +367,16 @@ class AirConditionerCard extends HTMLElement {
         text-align: center;
       }
 
-      .mode-section,
+      .mode-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
       .controls-section {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
       }
 
       .mode-chip,
@@ -359,15 +385,20 @@ class AirConditionerCard extends HTMLElement {
         padding: 8px 12px;
         border-radius: 20px;
         --mdc-theme-primary: var(--mode-color, var(--primary-color));
-        background-color: rgba(255, 255, 255, 0.5) !important;
-        color: rgba(0, 0, 0, 0.6) !important;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        background-color: rgba(255, 255, 255, 0.3) !important;
+        color: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
         transition: all 0.3s ease;
       }
 
       .mode-chip ::slotted(*),
       .control-chip ::slotted(*) {
-        color: rgba(0, 0, 0, 0.6) !important;
+        color: rgba(0, 0, 0, 0.5) !important;
+      }
+
+      .mode-chip ha-icon,
+      .control-chip ha-icon {
+        color: rgba(0, 0, 0, 0.5) !important;
       }
 
       .mode-chip:hover:not(:disabled),
@@ -397,15 +428,20 @@ class AirConditionerCard extends HTMLElement {
 
       .mode-chip:disabled,
       .control-chip:disabled {
-        background-color: rgba(255, 255, 255, 0.3) !important;
-        color: rgba(0, 0, 0, 0.4) !important;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: rgba(0, 0, 0, 0.3) !important;
         opacity: 1;
         cursor: not-allowed;
       }
 
       .mode-chip:disabled ::slotted(*),
       .control-chip:disabled ::slotted(*) {
-        color: rgba(0, 0, 0, 0.4) !important;
+        color: rgba(0, 0, 0, 0.3) !important;
+      }
+
+      .mode-chip:disabled ha-icon,
+      .control-chip:disabled ha-icon {
+        color: rgba(0, 0, 0, 0.3) !important;
       }
 
       .control-chip {
