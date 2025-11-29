@@ -317,6 +317,13 @@ class AirConditionerCard extends HTMLElement {
 
       .temp-controls {
         display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+
+      .target-temp-wrapper {
+        display: flex;
         align-items: center;
         gap: 12px;
       }
@@ -640,6 +647,17 @@ class AirConditionerCard extends HTMLElement {
 
     const tempControls = document.createElement("div");
     tempControls.className = "temp-controls";
+
+    // 添加"设定温度"标签
+    const targetTempLabel = document.createElement("div");
+    targetTempLabel.className = "temp-label";
+    targetTempLabel.textContent = "设定温度";
+    tempControls.appendChild(targetTempLabel);
+
+    // 温度控制按钮和目标温度容器
+    const targetTempWrapper = document.createElement("div");
+    targetTempWrapper.className = "target-temp-wrapper";
+
     const minusBtn = document.createElement("mwc-button");
     minusBtn.className = "temp-btn";
     minusBtn.style.cursor = "pointer";
@@ -662,9 +680,10 @@ class AirConditionerCard extends HTMLElement {
     plusIcon.setAttribute("icon", "mdi:plus");
     plusBtn.appendChild(plusIcon);
 
-    tempControls.appendChild(minusBtn);
-    tempControls.appendChild(targetTempDiv);
-    tempControls.appendChild(plusBtn);
+    targetTempWrapper.appendChild(minusBtn);
+    targetTempWrapper.appendChild(targetTempDiv);
+    targetTempWrapper.appendChild(plusBtn);
+    tempControls.appendChild(targetTempWrapper);
 
     tempSection.appendChild(currentTempDiv);
     tempSection.appendChild(tempControls);
