@@ -765,6 +765,7 @@ class AirConditionerCardEditor extends HTMLElement {
     super();
     this._config = {};
     this._hass = null;
+    this._hasRendered = false;
   }
 
   setConfig(config) {
@@ -775,14 +776,22 @@ class AirConditionerCardEditor extends HTMLElement {
       hasShadowRoot: !!this.shadowRoot,
     });
     this._config = config || {};
-    // 如果已经连接到 DOM，立即渲染（不等待 hass）
+    // 如果已经连接到 DOM 且已经渲染过，不重复渲染
     if (this.isConnected) {
       if (!this.shadowRoot) {
         this.attachShadow({ mode: "open" });
       }
-      // 即使 hass 未设置也渲染，hass 会在之后设置并更新 picker
-      console.log("[AirConditionerCardEditor] Calling _render from setConfig");
-      this._render();
+      // 只有在还没有渲染过时才渲染
+      if (!this._hasRendered) {
+        console.log(
+          "[AirConditionerCardEditor] Calling _render from setConfig"
+        );
+        this._render();
+      } else {
+        console.log(
+          "[AirConditionerCardEditor] Already rendered, skipping _render"
+        );
+      }
     }
   }
 
@@ -866,10 +875,12 @@ class AirConditionerCardEditor extends HTMLElement {
       hasShadowRoot: !!this.shadowRoot,
       hasConfig: !!this._config,
       hasHass: !!this._hass,
+      hasRendered: this._hasRendered,
     });
     if (!this.shadowRoot) {
       this.attachShadow({ mode: "open" });
     }
+    this._hasRendered = true;
 
     const style = document.createElement("style");
     style.textContent = `
