@@ -778,9 +778,6 @@ class AirConditionerCardEditor extends HTMLElement {
     this._config = config || {};
     // 如果已经连接到 DOM 且已经渲染过，不重复渲染
     if (this.isConnected) {
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: "open" });
-      }
       // 只有在还没有渲染过时才渲染
       if (!this._hasRendered) {
         console.log(
@@ -809,11 +806,8 @@ class AirConditionerCardEditor extends HTMLElement {
     this._hass = hass;
     // 如果已经连接到 DOM，渲染或更新
     if (this.isConnected) {
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: "open" });
-      }
       // 如果已经渲染，更新 picker 的 hass
-      const picker = this.shadowRoot.querySelector("ha-entity-picker");
+      const picker = this.querySelector("ha-entity-picker");
       console.log("[AirConditionerCardEditor] Picker found:", !!picker);
       if (picker) {
         // 检查是否已经设置过，避免循环调用
@@ -828,8 +822,7 @@ class AirConditionerCardEditor extends HTMLElement {
         if (!isHassSet) {
           // 使用 requestAnimationFrame 确保在下一帧设置，避免在渲染过程中设置
           requestAnimationFrame(() => {
-            const currentPicker =
-              this.shadowRoot.querySelector("ha-entity-picker");
+            const currentPicker = this.querySelector("ha-entity-picker");
             console.log("[AirConditionerCardEditor] Setting hass to picker", {
               hasPicker: !!currentPicker,
               hasHass: !!this._hass,
@@ -874,10 +867,6 @@ class AirConditionerCardEditor extends HTMLElement {
       hasConfig: !!this._config,
       hasHass: !!this._hass,
     });
-    // 确保在连接时渲染（如果 hass 和 config 都已设置）
-    if (!this.shadowRoot) {
-      this.attachShadow({ mode: "open" });
-    }
     // 如果 config 和 hass 都已设置，立即渲染
     if (this._config && this._hass) {
       console.log(
@@ -900,9 +889,8 @@ class AirConditionerCardEditor extends HTMLElement {
       hasHass: !!this._hass,
       hasRendered: this._hasRendered,
     });
-    if (!this.shadowRoot) {
-      this.attachShadow({ mode: "open" });
-    }
+    // 不使用 shadow DOM，直接操作元素
+    // ha-entity-picker 可能需要访问外部上下文
     this._hasRendered = true;
 
     const style = document.createElement("style");
@@ -1001,9 +989,14 @@ class AirConditionerCardEditor extends HTMLElement {
     editor.appendChild(nameRow);
     editor.appendChild(entityRow);
 
-    this.shadowRoot.innerHTML = "";
-    this.shadowRoot.appendChild(style);
-    this.shadowRoot.appendChild(editor);
+    // 不使用 shadow DOM，直接操作元素
+    // ha-entity-picker 可能需要访问外部上下文
+    this.innerHTML = "";
+    // 添加样式（使用 <style> 标签）
+    const styleElement = document.createElement("style");
+    styleElement.textContent = style.textContent;
+    this.appendChild(styleElement);
+    this.appendChild(editor);
 
     // 直接设置属性，不等待组件定义
     // Home Assistant 的组件是懒加载的，但设置属性后会自动触发组件加载
@@ -1019,7 +1012,7 @@ class AirConditionerCardEditor extends HTMLElement {
   }
 
   _setupEntityPicker() {
-    const picker = this.shadowRoot.querySelector("ha-entity-picker");
+    const picker = this.querySelector("ha-entity-picker");
     console.log("[AirConditionerCardEditor] _setupEntityPicker called", {
       hasPicker: !!picker,
       hasHass: !!this._hass,
@@ -1029,7 +1022,7 @@ class AirConditionerCardEditor extends HTMLElement {
     });
 
     if (!picker) {
-      console.warn("[AirConditionerCardEditor] Picker not found in shadowRoot");
+      console.warn("[AirConditionerCardEditor] Picker not found");
       return;
     }
 
@@ -1053,7 +1046,7 @@ class AirConditionerCardEditor extends HTMLElement {
     if (this._hass) {
       // 使用 setTimeout 而不是 requestAnimationFrame，给组件更多时间初始化
       setTimeout(() => {
-        const finalPicker = this.shadowRoot.querySelector("ha-entity-picker");
+        const finalPicker = this.querySelector("ha-entity-picker");
         console.log("[AirConditionerCardEditor] Setting hass to picker", {
           hasPicker: !!finalPicker,
           hasHass: !!this._hass,
