@@ -885,19 +885,6 @@ class AirConditionerCardEditor extends HTMLElement {
       .editor-row {
         margin-bottom: 16px;
       }
-      .editor-label {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--primary-text-color, var(--ha-text-primary-color, #000000));
-        font-weight: 500;
-      }
-      .editor-help {
-        display: block;
-        margin-top: 4px;
-        font-size: 12px;
-        color: var(--secondary-text-color, var(--ha-text-secondary-color, rgba(0, 0, 0, 0.6)));
-        opacity: 0.8;
-      }
       
       ha-textfield {
         --mdc-theme-primary: var(--primary-color, #03a9f4);
@@ -915,31 +902,7 @@ class AirConditionerCardEditor extends HTMLElement {
     const editor = document.createElement("div");
     editor.className = "editor";
 
-    // 卡片名称
-    const nameRow = document.createElement("div");
-    nameRow.className = "editor-row";
-    const nameLabel = document.createElement("label");
-    nameLabel.className = "editor-label";
-    nameLabel.textContent = "卡片名称";
-    const nameInput = document.createElement("ha-textfield");
-    nameInput.label = "名称";
-    nameInput.value = (this._config && this._config.name) || "";
-    nameInput.style.setProperty("--mdc-theme-primary", "var(--primary-color)");
-    nameInput.addEventListener("input", (ev) => {
-      if (!this._config) {
-        this._config = {};
-      }
-      this._config.name = ev.target.value;
-      this._fireConfigChanged();
-    });
-    const nameHelp = document.createElement("div");
-    nameHelp.className = "editor-help";
-    nameHelp.textContent = "显示在卡片上的名称（可选）";
-    nameRow.appendChild(nameLabel);
-    nameRow.appendChild(nameInput);
-    nameRow.appendChild(nameHelp);
-
-    // 空调实体
+    // 空调实体（必须项，放在第一位）
     const entityRow = document.createElement("div");
     entityRow.className = "editor-row";
 
@@ -988,14 +951,26 @@ class AirConditionerCardEditor extends HTMLElement {
       }
     });
 
-    const entityHelp = document.createElement("div");
-    entityHelp.className = "editor-help";
-    entityHelp.textContent = "选择要控制的空调实体";
     entityRow.appendChild(entityForm);
-    entityRow.appendChild(entityHelp);
 
-    editor.appendChild(nameRow);
+    // 卡片名称（可选项）
+    const nameRow = document.createElement("div");
+    nameRow.className = "editor-row";
+    const nameInput = document.createElement("ha-textfield");
+    nameInput.label = "卡片名称";
+    nameInput.value = (this._config && this._config.name) || "";
+    nameInput.style.setProperty("--mdc-theme-primary", "var(--primary-color)");
+    nameInput.addEventListener("input", (ev) => {
+      if (!this._config) {
+        this._config = {};
+      }
+      this._config.name = ev.target.value;
+      this._fireConfigChanged();
+    });
+    nameRow.appendChild(nameInput);
+
     editor.appendChild(entityRow);
+    editor.appendChild(nameRow);
 
     // ha-form 的属性已在上面设置
     console.log("[AirConditionerCardEditor] Entity form created", {
