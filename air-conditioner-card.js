@@ -827,6 +827,7 @@ class AirConditionerCardEditor extends HTMLElement {
     console.log("[AirConditionerCardEditor] connectedCallback called", {
       hasConfig: !!this._config,
       hasHass: !!this._hass,
+      hasRendered: this._hasRendered,
     });
 
     // 参考 Mushroom 的实现：确保 Home Assistant 组件已加载
@@ -844,6 +845,12 @@ class AirConditionerCardEditor extends HTMLElement {
       // 继续执行，不阻塞渲染
     }
 
+    // 如果已经渲染过，不再重复渲染（避免重复创建 picker）
+    if (this._hasRendered) {
+      console.log("[AirConditionerCardEditor] Already rendered, skipping");
+      return;
+    }
+
     // 如果 config 和 hass 都已设置，立即渲染
     if (this._config && this._hass) {
       console.log(
@@ -859,7 +866,7 @@ class AirConditionerCardEditor extends HTMLElement {
     }
   }
 
-  _render() {
+  async _render() {
     console.log("[AirConditionerCardEditor] _render called", {
       hasShadowRoot: !!this.shadowRoot,
       hasConfig: !!this._config,
@@ -938,59 +945,67 @@ class AirConditionerCardEditor extends HTMLElement {
     entityLabel.className = "editor-label";
     entityLabel.textContent = "空调实体 *";
 
-    // 等待 ha-entity-picker 组件定义后再创建和设置属性
-    console.log("[AirConditionerCardEditor] Creating ha-entity-picker", {
-      componentDefined: !!customElements.get("ha-entity-picker"),
-    });
+    // 使用 ha-form 组件（参考 Mushroom 的实现方式）
+    // ha-form 会自动处理内部的 ha-entity-picker 初始化
+    const entityForm = document.createElement("ha-form");
 
-    const entityPicker = document.createElement("ha-entity-picker");
-    console.log(
-      "[AirConditionerCardEditor] ha-entity-picker created",
-      entityPicker
-    );
+    // 定义 schema
+    const schema = [
+      {
+        name: "entity",
+        required: true,
+        selector: {
+          entity: {
+            domain: ["climate"],
+          },
+        },
+      },
+    ];
 
-    // 添加值变更监听（在设置属性之前）
-    entityPicker.addEventListener("value-changed", (ev) => {
+    // 设置 ha-form 的属性
+    entityForm.hass = this._hass;
+    entityForm.data = {
+      entity: (this._config && this._config.entity) || "",
+    };
+    entityForm.schema = schema;
+    entityForm.computeLabel = (schema) => {
+      if (schema.name === "entity") {
+        return "空调实体 *";
+      }
+      return schema.name;
+    };
+
+    // 监听值变更
+    entityForm.addEventListener("value-changed", (ev) => {
       console.log(
-        "[AirConditionerCardEditor] Entity picker value changed",
+        "[AirConditionerCardEditor] Entity form value changed",
         ev.detail.value
       );
       if (!this._config) {
         this._config = {};
       }
-      this._config.entity = ev.detail.value;
-      this._fireConfigChanged();
+      if (ev.detail.value && ev.detail.value.entity) {
+        this._config.entity = ev.detail.value.entity;
+        this._fireConfigChanged();
+      }
     });
 
     const entityHelp = document.createElement("div");
     entityHelp.className = "editor-help";
     entityHelp.textContent = "选择要控制的空调实体";
     entityRow.appendChild(entityLabel);
-    entityRow.appendChild(entityPicker);
+    entityRow.appendChild(entityForm);
     entityRow.appendChild(entityHelp);
 
     editor.appendChild(nameRow);
     editor.appendChild(entityRow);
 
-    // 在添加到 DOM 之前，先设置属性
-    // 先设置 hass（如果可用），然后设置其他属性
-    if (this._hass) {
-      entityPicker.hass = this._hass;
-    }
-    entityPicker.includeDomains = ["climate"];
-    entityPicker.value = (this._config && this._config.entity) || "";
-
-    console.log("[AirConditionerCardEditor] Properties set before DOM append", {
-      hasHass: !!entityPicker.hass,
-      includeDomains: entityPicker.includeDomains,
-      value: entityPicker.value,
+    // ha-form 的属性已在上面设置
+    console.log("[AirConditionerCardEditor] Entity form created", {
+      hasHass: !!entityForm.hass,
+      hasData: !!entityForm.data,
+      hasSchema: !!entityForm.schema,
     });
-
-    // 尝试触发 connectedCallback（如果组件已经定义）
-    // 这可能会帮助组件正确初始化
-    if (entityPicker.connectedCallback && !entityPicker.isConnected) {
-      // 暂时不调用，因为元素还没有连接到 DOM
-    }
 
     // 不使用 shadow DOM，直接操作元素
     // ha-entity-picker 可能需要访问外部上下文
@@ -1001,11 +1016,12 @@ class AirConditionerCardEditor extends HTMLElement {
     this.appendChild(styleElement);
     this.appendChild(editor);
 
-    // 元素已添加到 DOM，再次确保属性正确设置
+    // ha-form 会自动处理内部组件的初始化，不需要额外的设置
+    // 但需要确保 hass 在添加到 DOM 后更新
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this._setupEntityPicker();
-      });
+      if (entityForm.hass !== this._hass && this._hass) {
+        entityForm.hass = this._hass;
+      }
     });
   }
 
@@ -1185,29 +1201,26 @@ class AirConditionerCardEditor extends HTMLElement {
       console.warn("[AirConditionerCardEditor] Name input not found");
     }
 
-    const picker = this.querySelector("ha-entity-picker");
-    if (picker) {
-      // 先设置 hass（如果还没有设置）
-      if (this._hass) {
-        if (!picker.hass || picker.hass !== this._hass) {
-          picker.hass = this._hass;
-          console.log("[AirConditionerCardEditor] Set hass to picker");
-        }
+    const form = this.querySelector("ha-form");
+    if (form) {
+      // 更新 ha-form 的 hass 和 data
+      if (this._hass && form.hass !== this._hass) {
+        form.hass = this._hass;
       }
-      // 设置过滤条件
-      picker.includeDomains = ["climate"];
-      // 设置值
       const newEntityValue = (this._config && this._config.entity) || "";
-      picker.value = newEntityValue;
-      console.log("[AirConditionerCardEditor] Updated picker", {
-        value: picker.value,
-        expectedValue: newEntityValue,
-        includeDomains: picker.includeDomains,
-        hasHass: !!picker.hass,
+      if (form.data && form.data.entity !== newEntityValue) {
+        form.data = {
+          entity: newEntityValue,
+        };
+      }
+      console.log("[AirConditionerCardEditor] Updated form", {
+        hasHass: !!form.hass,
+        data: form.data,
+        expectedEntity: newEntityValue,
       });
     } else {
       console.warn(
-        "[AirConditionerCardEditor] Picker not found in _updateValues"
+        "[AirConditionerCardEditor] Form not found in _updateValues"
       );
     }
   }
