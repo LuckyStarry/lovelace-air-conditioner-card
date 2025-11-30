@@ -823,11 +823,27 @@ class AirConditionerCardEditor extends HTMLElement {
     return this._hass;
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     console.log("[AirConditionerCardEditor] connectedCallback called", {
       hasConfig: !!this._config,
       hasHass: !!this._hass,
     });
+
+    // 参考 Mushroom 的实现：确保 Home Assistant 组件已加载
+    // 这可能会帮助 ha-entity-picker 等组件正确初始化
+    try {
+      if (window.loadCardHelpers) {
+        const helpers = await window.loadCardHelpers();
+        if (helpers && helpers.loadHaComponents) {
+          await helpers.loadHaComponents();
+          console.log("[AirConditionerCardEditor] HaComponents loaded");
+        }
+      }
+    } catch (e) {
+      console.warn("[AirConditionerCardEditor] Failed to load HaComponents", e);
+      // 继续执行，不阻塞渲染
+    }
+
     // 如果 config 和 hass 都已设置，立即渲染
     if (this._config && this._hass) {
       console.log(
