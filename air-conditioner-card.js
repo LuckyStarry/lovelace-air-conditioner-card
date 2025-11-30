@@ -412,6 +412,20 @@ class AirConditionerCard extends HTMLElement {
         cursor: pointer !important;
       }
 
+      /* 覆盖 mwc-button 的默认样式，禁用 hover 状态层 */
+      mwc-button.mode-chip,
+      mwc-button.control-chip {
+        --mdc-button-hover-state-layer-opacity: 0 !important;
+        --mdc-button-focus-state-layer-opacity: 0 !important;
+        --mdc-button-pressed-state-layer-opacity: 0 !important;
+      }
+
+      /* 确保 active 状态的背景色在 hover 时不被覆盖 */
+      mwc-button.mode-chip.active:hover:not(:disabled),
+      mwc-button.control-chip.active:hover:not(:disabled) {
+        --mdc-button-hover-state-layer-opacity: 0 !important;
+      }
+
       .mode-chip,
       .mode-chip * {
         cursor: pointer !important;
@@ -461,19 +475,6 @@ class AirConditionerCard extends HTMLElement {
         margin: 0;
       }
 
-      .mode-chip:hover:not(:disabled):not(.active),
-      .control-chip:hover:not(:disabled):not(.active) {
-        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.9))) !important;
-        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-        transform: translateY(-1px);
-      }
-
-      .mode-chip:hover:not(:disabled):not(.active) ::slotted(*),
-      .control-chip:hover:not(:disabled):not(.active) ::slotted(*) {
-        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
-      }
-
       .mode-chip.active,
       .control-chip.active {
         background-color: var(--mode-color, var(--primary-color)) !important;
@@ -485,11 +486,13 @@ class AirConditionerCard extends HTMLElement {
       }
 
       /* Active 状态下的 hover 效果：保持背景色，只增强阴影和亮度 */
+      /* 必须放在 .mode-chip.active 之后，确保优先级更高 */
       .mode-chip.active:hover:not(:disabled),
       .control-chip.active:hover:not(:disabled) {
         background-color: var(--mode-color, var(--primary-color)) !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+        border-color: var(--mode-color, var(--primary-color)) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15) !important;
         transform: translateY(-2px);
         filter: brightness(1.05) saturate(1.15);
       }
@@ -502,6 +505,20 @@ class AirConditionerCard extends HTMLElement {
       .mode-chip.active:hover:not(:disabled) ha-icon,
       .control-chip.active:hover:not(:disabled) ha-icon {
         color: white !important;
+      }
+
+      /* 非 active 状态的 hover 效果 */
+      .mode-chip:hover:not(:disabled):not(.active),
+      .control-chip:hover:not(:disabled):not(.active) {
+        background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.9))) !important;
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .mode-chip:hover:not(:disabled):not(.active) ::slotted(*),
+      .control-chip:hover:not(:disabled):not(.active) ::slotted(*) {
+        color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
       .mode-chip.active ::slotted(*),
