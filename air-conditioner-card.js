@@ -461,16 +461,16 @@ class AirConditionerCard extends HTMLElement {
         margin: 0;
       }
 
-      .mode-chip:hover:not(:disabled),
-      .control-chip:hover:not(:disabled) {
+      .mode-chip:hover:not(:disabled):not(.active),
+      .control-chip:hover:not(:disabled):not(.active) {
         background-color: var(--ha-card-background, var(--card-background-color, rgba(255, 255, 255, 0.9))) !important;
         color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         transform: translateY(-1px);
       }
 
-      .mode-chip:hover:not(:disabled) ::slotted(*),
-      .control-chip:hover:not(:disabled) ::slotted(*) {
+      .mode-chip:hover:not(:disabled):not(.active) ::slotted(*),
+      .control-chip:hover:not(:disabled):not(.active) ::slotted(*) {
         color: var(--ha-text-primary-color, var(--primary-text-color, rgba(0, 0, 0, 0.87))) !important;
       }
 
@@ -482,6 +482,26 @@ class AirConditionerCard extends HTMLElement {
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
         transform: translateY(-1px);
         filter: brightness(0.9) saturate(1.1);
+      }
+
+      /* Active 状态下的 hover 效果：保持背景色，只增强阴影和亮度 */
+      .mode-chip.active:hover:not(:disabled),
+      .control-chip.active:hover:not(:disabled) {
+        background-color: var(--mode-color, var(--primary-color)) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+        filter: brightness(1.05) saturate(1.15);
+      }
+
+      .mode-chip.active:hover:not(:disabled) ::slotted(*),
+      .control-chip.active:hover:not(:disabled) ::slotted(*) {
+        color: white !important;
+      }
+
+      .mode-chip.active:hover:not(:disabled) ha-icon,
+      .control-chip.active:hover:not(:disabled) ha-icon {
+        color: white !important;
       }
 
       .mode-chip.active ::slotted(*),
