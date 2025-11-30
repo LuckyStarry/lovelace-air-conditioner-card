@@ -167,7 +167,7 @@ class AirConditionerCard extends HTMLElement {
   _getFanModes() {
     return [
       { mode: "自动风速", icon: "mdi:fan-auto" },
-      { mode: "静音风速", icon: "mdi:fan-speed-1" },
+      { mode: "静音风速", icon: "mdi:weather-night" }, // 夜晚/睡眠模式，更符合静音的感觉
       { mode: "一档", icon: "mdi:numeric-1-circle" },
       { mode: "二挡", icon: "mdi:numeric-2-circle" },
       { mode: "三挡", icon: "mdi:numeric-3-circle" },
