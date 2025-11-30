@@ -895,7 +895,8 @@ class AirConditionerCardEditor extends HTMLElement {
         display: block;
         margin-top: 4px;
         font-size: 12px;
-        color: var(--ha-text-secondary-color, rgba(0, 0, 0, 0.6));
+        color: var(--secondary-text-color, var(--ha-text-secondary-color, rgba(0, 0, 0, 0.6)));
+        opacity: 0.8;
       }
       
       ha-textfield {
@@ -941,12 +942,9 @@ class AirConditionerCardEditor extends HTMLElement {
     // 空调实体
     const entityRow = document.createElement("div");
     entityRow.className = "editor-row";
-    const entityLabel = document.createElement("label");
-    entityLabel.className = "editor-label";
-    entityLabel.textContent = "空调实体 *";
 
     // 使用 ha-form 组件（参考 Mushroom 的实现方式）
-    // ha-form 会自动处理内部的 ha-entity-picker 初始化
+    // ha-form 会自动处理内部的 ha-entity-picker 初始化和标签显示
     const entityForm = document.createElement("ha-form");
 
     // 定义 schema
@@ -993,7 +991,6 @@ class AirConditionerCardEditor extends HTMLElement {
     const entityHelp = document.createElement("div");
     entityHelp.className = "editor-help";
     entityHelp.textContent = "选择要控制的空调实体";
-    entityRow.appendChild(entityLabel);
     entityRow.appendChild(entityForm);
     entityRow.appendChild(entityHelp);
 
