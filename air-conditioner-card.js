@@ -141,7 +141,7 @@ class AirConditionerCard extends HTMLElement {
       }
       .ac-card {
         padding: 14px 16px;
-        min-height: 330px;
+        min-height: 456px;
         box-sizing: border-box;
         border-radius: var(--ha-card-border-radius, 12px);
         background: var(--ha-card-background, var(--card-background-color, #fff));
