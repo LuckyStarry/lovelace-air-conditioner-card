@@ -177,12 +177,12 @@ class AirConditionerCard extends HTMLElement {
       /* 设定温度居中区 */
       .temp-zone {
         display: flex; align-items: center; justify-content: center;
-        gap: 18px; padding: 14px 0 10px;
+        gap: 8px; padding: 14px 0 10px;
       }
       .step-btn {
-        width: 36px; height: 36px;
-        min-width: 36px; min-height: 36px;
-        max-width: 36px; max-height: 36px;
+        width: 28px; height: 28px;
+        min-width: 28px; min-height: 28px;
+        max-width: 28px; max-height: 28px;
         box-sizing: border-box;
         aspect-ratio: 1;
         border-radius: 9999px;
@@ -191,20 +191,20 @@ class AirConditionerCard extends HTMLElement {
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; transition: all .18s ease; padding: 0; line-height: 1;
       }
-      .step-btn ha-icon { --mdc-icon-size: 20px; pointer-events: none; }
+      .step-btn ha-icon { --mdc-icon-size: 18px; pointer-events: none; }
       .step-btn:hover:not(:disabled) {
         background: color-mix(in srgb, var(--ac-accent) 14%, transparent);
         border-color: var(--ac-accent); color: var(--ac-accent);
       }
       .step-btn:disabled { opacity: .35; cursor: not-allowed; }
-      .temp-display { display: flex; flex-direction: column; align-items: center; min-width: 96px; }
+      .temp-display { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
       .temp-value {
-        font-size: 42px; font-weight: 300; line-height: 1.05;
+        font-size: 38px; font-weight: 300; line-height: 1.05;
         font-variant-numeric: tabular-nums;
         color: var(--primary-text-color);
         transition: opacity .2s ease;
       }
-      .temp-value small { font-size: 20px; font-weight: 400; }
+      .temp-value small { font-size: 17px; font-weight: 400; }
       .temp-label {
         font-size: 11px; color: var(--secondary-text-color);
         letter-spacing: 2px; margin-top: 2px;
