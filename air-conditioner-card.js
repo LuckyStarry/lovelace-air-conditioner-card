@@ -139,7 +139,9 @@ class AirConditionerCard extends HTMLElement {
         .temp-display { min-width: 84px; }
       }
       .ac-card {
+        display: block;
         padding: 14px 16px;
+        min-height: 268px; box-sizing: border-box;
         box-sizing: border-box;
         border-radius: var(--ha-card-border-radius, 12px);
         background: var(--ha-card-background, var(--card-background-color, #fff));
