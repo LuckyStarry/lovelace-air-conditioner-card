@@ -128,7 +128,6 @@ class AirConditionerCard extends HTMLElement {
       :host { display: block; }
       :host { display: block; container-type: inline-size; }
       @container (max-width: 320px) {
-        .temp-zone { gap: 12px; padding: 12px 0 8px; }
         .step-btn {
           width: 30px; height: 30px;
           min-width: 30px; min-height: 30px;
